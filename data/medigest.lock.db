@@ -1,6 +1,6 @@
 #FileLock
-#Tue Jun 23 21:19:27 COT 2026
-server=192.168.100.8\:51629
-hostName=LAPTOP-PNT8FSGJ
+#Mon Jun 22 23:55:52 PET 2026
+hostName=192.168.1.9
+id=19ef2d5b513fd3c561d0292576c00f9361189406339
 method=file
-id=19ef76cdf2cbccb4c84dea84d0529051efaffa6dbdf
+server=192.168.1.9\:59279
