@@ -15,7 +15,7 @@ import java.util.List;
 public class PaqueteServicios extends ItemFacturable {
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "paquete_id")
+    @JoinColumn(name = "paquete_id", nullable = true)
     private List<ItemFacturable> componentes = new ArrayList<>();
 
     public PaqueteServicios(String nombre) {

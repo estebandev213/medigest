@@ -16,7 +16,9 @@ public class FacturacionController {
 
     private final ServicioFacturacion servicioFacturacion;
 
-    // RF08 — generar factura (Strategy aplicada)
+    // ── FACTURAS ────────────────────────────────────────────────────────────
+
+    /** RF08 — Generar factura con Strategy de cobertura (PARTICULAR / SIS / SEGURO_PRIVADO) */
     @PostMapping("/facturas")
     public ResponseEntity<Factura> generarFactura(@RequestBody Map<String, Object> req) {
         Long pacienteId = Long.valueOf(req.get("pacienteId").toString());
@@ -25,24 +27,6 @@ public class FacturacionController {
                 ? TipoCobertura.valueOf(req.get("tipoCobertura").toString())
                 : TipoCobertura.PARTICULAR;
         return ResponseEntity.ok(servicioFacturacion.generarFactura(pacienteId, itemId, cobertura));
-    }
-
-    // RF10 — crear servicio simple (hoja del Composite)
-    @PostMapping("/servicios")
-    public ResponseEntity<ServicioSimple> crearServicio(@RequestBody Map<String, Object> req) {
-        String nombre  = (String) req.get("nombre");
-        double precio  = Double.parseDouble(req.get("precioBase").toString());
-        return ResponseEntity.ok(servicioFacturacion.crearServicioSimple(nombre, precio));
-    }
-
-    // RF10 — crear paquete de servicios (nodo Composite)
-    @PostMapping("/paquetes")
-    public ResponseEntity<PaqueteServicios> crearPaquete(@RequestBody Map<String, Object> req) {
-        String nombre = (String) req.get("nombre");
-        @SuppressWarnings("unchecked")
-        List<Long> itemIds = ((List<Integer>) req.get("itemIds"))
-                .stream().map(Long::valueOf).toList();
-        return ResponseEntity.ok(servicioFacturacion.crearPaquete(nombre, itemIds));
     }
 
     @GetMapping("/facturas")
@@ -57,7 +41,35 @@ public class FacturacionController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // RF09 — listar servicios/paquetes disponibles
+    /** Listar facturas de un paciente específico */
+    @GetMapping("/facturas/paciente/{pacienteId}")
+    public ResponseEntity<List<Factura>> listarFacturasPorPaciente(@PathVariable Long pacienteId) {
+        return ResponseEntity.ok(servicioFacturacion.listarFacturasPorPaciente(pacienteId));
+    }
+
+    // ── SERVICIOS (Composite — hojas) ───────────────────────────────────────
+
+    /** RF10 — Crear servicio simple (hoja del árbol Composite) */
+    @PostMapping("/servicios")
+    public ResponseEntity<ServicioSimple> crearServicio(@RequestBody Map<String, Object> req) {
+        String nombre = (String) req.get("nombre");
+        double precio = Double.parseDouble(req.get("precioBase").toString());
+        return ResponseEntity.ok(servicioFacturacion.crearServicioSimple(nombre, precio));
+    }
+
+    // ── PAQUETES (Composite — nodos) ────────────────────────────────────────
+
+    /** RF10 — Crear paquete de servicios (nodo compuesto del árbol Composite) */
+    @PostMapping("/paquetes")
+    public ResponseEntity<PaqueteServicios> crearPaquete(@RequestBody Map<String, Object> req) {
+        String nombre = (String) req.get("nombre");
+        @SuppressWarnings("unchecked")
+        List<Long> itemIds = ((List<Integer>) req.get("itemIds"))
+                .stream().map(Long::valueOf).toList();
+        return ResponseEntity.ok(servicioFacturacion.crearPaquete(nombre, itemIds));
+    }
+
+    /** RF09 — Listar todos los ítems facturables (servicios simples y paquetes) */
     @GetMapping("/servicios")
     public ResponseEntity<List<ItemFacturable>> listarServicios() {
         return ResponseEntity.ok(servicioFacturacion.listarServicios());

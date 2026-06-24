@@ -19,7 +19,8 @@ public class CalculadorFactura {
         double costoTotal    = servicio.calcularCosto();
         double montoCubierto = estrategiaPago.calcularCobertura(costoTotal);
         double montoPaciente = costoTotal - montoCubierto;
-        return new ResultadoFactura(costoTotal, montoCubierto, montoPaciente, estrategiaPago.getNombreEstrategia());
+        return new ResultadoFactura(costoTotal, montoCubierto, montoPaciente, 
+            estrategiaPago.getNombreEstrategia());
     }
 
     public record ResultadoFactura(

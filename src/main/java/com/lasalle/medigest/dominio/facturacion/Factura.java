@@ -24,6 +24,11 @@ public class Factura {
     @JoinColumn(name = "paciente_id", nullable = false)
     private Paciente paciente;
 
+    /** Referencia al ítem facturado (ServicioSimple o PaqueteServicios). */
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "item_id")
+    private ItemFacturable item;
+
     private LocalDateTime fechaEmision;
     private double costoTotal;
     private double montoCubierto;
