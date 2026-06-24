@@ -141,5 +141,5 @@ Abre tu navegador, cartero de **API** (Postman/Insomnia) o ejecuta en otra termi
 
 - http
 
-**GET** [http://localhost:8080/api/admision/pacientes/72145844/validar](http://localhost:8080/api/admision/pacientes/72145844/validar)
+**GET** [http://localhost:8080/api/admision/pacientes/xxxxxxxx/validar](http://localhost:8080/api/admision/pacientes/xxxxxxxx/validar)
 Deberías recibir la respuesta con el nombre y los apellidos reales obtenidos desde **RENIEC**.
