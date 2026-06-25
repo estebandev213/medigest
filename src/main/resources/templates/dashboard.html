@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediGest - Panel de Control</title>
+    <link rel="stylesheet" th:href="@{/styles/global.css}">
+    <link rel="stylesheet" th:href="@{/styles/dashboard.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="dashboard-layout">
+        
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <a href="#" class="logo">Medi<span>Gest</span></a>
+            </div>
+            
+            <nav class="sidebar-menu">
+                <a href="#" class="menu-item active">
+                    <i class="fas fa-calendar-alt"></i> Mis Citas
+                </a>
+                <a href="#" class="menu-item">
+                    <i class="fas fa-user-md"></i> Buscar Médicos
+                </a>
+                <a href="#" class="menu-item">
+                    <i class="fas fa-file-medical"></i> Historial Clínico
+                </a>
+                <a href="#" class="menu-item">
+                    <i class="fas fa-user"></i> Mi Perfil
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <a href="#" class="menu-item logout">
+                    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                </a>
+            </div>
+        </aside>
+
+        <div class="main-wrapper">
+            
+            <header class="topbar">
+                <div class="topbar-left">
+                    <h2>Mis Citas Médicas</h2>
+                </div>
+                <div class="topbar-right">
+                    <div class="user-info">
+                        //TODO: AQUI SE IMPLEMENTA EL THYMELEAF JALANDO EL NOMBRE DEL USUARIO IDENTIFICADO BROTHERS
+                        <span class="user-name">Carlos Mendoza</span>
+                        <div class="user-avatar">CM</div>
+                    </div>
+                </div>
+            </header>
+
+            <main class="main-content">
+                <div class="placeholder-content">
+                    <p>Estructura base lista. Aquí desplegaremos el listado de tus próximas consultas.</p>
+                </div>
+            </main>
+
+        </div>
+
+    </div>
+
+</body>
+</html>

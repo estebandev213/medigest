@@ -13,14 +13,14 @@ public class MainUiController {
     }
 
     // Ruta para el Login (templates/login.html)
-    // @GetMapping("/login")
-    // public String login() {
-    //     return "login";
-    // }
+    @GetMapping("/login")
+    public String login() {
+        return "login";
+    }
 
     // Ruta para el Dashboard (templates/dashboard.html)
-    // @GetMapping("/dashboard")
-    // public String dashboard() {
-    //     return "dashboard";
-    // }
+    @GetMapping("/dashboard")
+    public String dashboard() {
+        return "dashboard";
+    }
 }

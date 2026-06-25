@@ -14,13 +14,10 @@
 
     <main class="container">
 
-        <!-- Lado Izquierdo: Azul con el Médico -->
         <section class="image-box">
-            <!-- Si quieres poner el logo flotando arriba como en la foto, se puede, pero para dejarlo básico aquí va la imagen -->
             <img th:src="@{/images/medigestLeder.png}" alt="Médico MediGest">
         </section>
 
-        <!-- Lado Derecho: Fondo gris con el Formulario alineado -->
         <section class="login-box">
             <div class="login-content">
                 
@@ -32,19 +29,16 @@
 
                 <form th:action="@{/login}" method="post">
                     
-                    <!-- Grupo Correo -->
                     <div class="input-group">
                         <label for="username">Correo electrónico</label>
                         <input type="text" id="username" name="username" placeholder="admin@medicitas.com" required>
                     </div>
 
-                    <!-- Grupo Contraseña -->
                     <div class="input-group">
                         <label for="password">Contraseña</label>
                         <input type="password" id="password" name="password" placeholder="••••••••" required>
                     </div>
 
-                    <!-- Fila de Recordarme / Olvidaste -->
                     <div class="form-actions">
                         <label class="remember-me">
                             <input type="checkbox" name="remember"> Recordarme
@@ -52,7 +46,6 @@
                         <a href="#" class="forgot-password">¿Olvidaste tu contraseña?</a>
                     </div>
 
-                    <!-- Botón de Ingreso -->
                     <button type="submit">
                         Ingresar al sistema →
                     </button>

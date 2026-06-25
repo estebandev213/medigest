@@ -60,6 +60,7 @@ body {
     cursor: pointer;
     font-weight: 600;
     transition: var(--transition-fast);
+    text-decoration: none;
 }
 
 .btn-login:hover {
@@ -92,14 +93,14 @@ body {
     font-size: 19px;
     color: var(--color-text-secondary);
     margin-bottom: 45px;
-    max-width: 800px;
+    max-width: 1000px;
     margin-left: auto;
     margin-right: auto;
 }
 
 /* CONTENEDOR DEL BANNER */
 .hero-banner-container {
-    max-width: 950px;
+    max-width: 1500px;
     margin: 0 auto;
     border-radius: 16px;
     box-shadow: 0 15px 35px rgba(26, 111, 175, 0.15);
@@ -110,7 +111,7 @@ body {
 .hero-banner {
     width: 100%;
     height: auto;
-    max-height: 520px;
+    max-height: 900px;
     object-fit: cover;
     display: block;
 }
@@ -182,13 +183,13 @@ section {
 
 .carousel-track {
     display: flex;
-    gap: 20px;
+    gap: 15px;
     transition: transform 0.3s ease-in-out;
 }
 
 .doctor-card {
-    min-width: calc(33.333% - 14px); 
-    max-width: calc(33.333% - 14px);
+    min-width: calc(33.333% - 10px); 
+    max-width: calc(33.333% - 10px);
     background-color: var(--color-surface);
     border: 1px solid var(--color-border);
     border-radius: var(--border-radius);
@@ -202,8 +203,8 @@ section {
 
 /* FOTOS GRANDES PARA LOS DOCTORES */
 .doctor-avatar-img {
-    width: 140px;
-    height: 140px;
+    width: 230px;
+    height: 230px;
     border-radius: 50%;
     object-fit: cover;
     object-position: center top; /* Asegura un encuadre centrado en la cara */
