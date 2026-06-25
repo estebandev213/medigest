@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MediGest - Panel de Control</title>
+    <title>MediGest - Mis Citas</title>
     <link rel="stylesheet" th:href="@{/styles/global.css}">
     <link rel="stylesheet" th:href="@{/styles/dashboard.css}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -12,56 +12,77 @@
 
     <div class="dashboard-layout">
         
-        <aside class="sidebar">
-            <div class="sidebar-brand">
-                <a href="#" class="logo">Medi<span>Gest</span></a>
-            </div>
-            
-            <nav class="sidebar-menu">
-                <a href="#" class="menu-item active">
-                    <i class="fas fa-calendar-alt"></i> Mis Citas
-                </a>
-                <a href="#" class="menu-item">
-                    <i class="fas fa-user-md"></i> Buscar Médicos
-                </a>
-                <a href="#" class="menu-item">
-                    <i class="fas fa-file-medical"></i> Historial Clínico
-                </a>
-                <a href="#" class="menu-item">
-                    <i class="fas fa-user"></i> Mi Perfil
-                </a>
-            </nav>
-            
-            <div class="sidebar-footer">
-                <a href="#" class="menu-item logout">
-                    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
-                </a>
-            </div>
-        </aside>
+        <div th:replace="~{fragments/dashboard-nav:: sidebar('citas')}"></div>
 
         <div class="main-wrapper">
             
-            <header class="topbar">
-                <div class="topbar-left">
-                    <h2>Mis Citas Médicas</h2>
-                </div>
-                <div class="topbar-right">
-                    <div class="user-info">
-                        //TODO: AQUI SE IMPLEMENTA EL THYMELEAF JALANDO EL NOMBRE DEL USUARIO IDENTIFICADO BROTHERS
-                        <span class="user-name">Carlos Mendoza</span>
-                        <div class="user-avatar">CM</div>
-                    </div>
-                </div>
-            </header>
+            <div th:replace="~{fragments/dashboard-nav :: topbar('Mis Citas Médicas')}"></div>
 
             <main class="main-content">
-                <div class="placeholder-content">
-                    <p>Estructura base lista. Aquí desplegaremos el listado de tus próximas consultas.</p>
+                
+                <div class="kpi-container">
+                    <div class="kpi-card text-primary">
+                        <h3>Próxima Cita</h3>
+                        <p class="kpi-value">Mañana</p>
+                        <span class="kpi-sub">10:30 AM - Dr. Ruiz</span>
+                    </div>
+                    <div class="kpi-card text-success">
+                        <h3>Citas Totales</h3>
+                        <p class="kpi-value">12</p>
+                        <span class="kpi-sub">Historial completo</span>
+                    </div>
+                    <div class="kpi-card text-warning">
+                        <h3>Pendientes</h3>
+                        <p class="kpi-value">1</p>
+                        <span class="kpi-sub">Por confirmar</span>
+                    </div>
                 </div>
+
+                <div class="table-container">
+                    <table class="custom-table">
+                        <thead>
+                            <tr>
+                                <th>Médico / Especialista</th>
+                                <th>Fecha y Hora</th>
+                                <th>Consultorio / Sede</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="table-user">
+                                        <div class="table-avatar">AR</div>
+                                        <div>
+                                            <strong>Dr. Alejandro Ruiz</strong>
+                                            <p>Cardiología</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>26/06/2026 - 10:30 AM</td>
+                                <td>Consultorio 402 (Sede Central)</td>
+                                <td><span class="status-badge success">Confirmada</span></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="table-user">
+                                        <div class="table-avatar">EM</div>
+                                        <div>
+                                            <strong>Dra. Elena Mendoza</strong>
+                                            <p>Pediatría</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>02/07/2026 - 04:00 PM</td>
+                                <td>Consultorio 105 (Sede Norte)</td>
+                                <td><span class="status-badge warning">Pendiente</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
             </main>
-
         </div>
-
     </div>
 
 </body>

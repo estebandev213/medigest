@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head></head>
+<body>
+
+    <aside th:fragment="sidebar(seccionActiva)" class="sidebar">
+        <div class="sidebar-brand">
+            <a href="#" class="logo">Medi<span>Gest</span></a>
+        </div>
+        
+        <nav class="sidebar-menu">
+            <a th:href="@{/dashboard}" class="menu-item" th:classappend="${seccionActiva == 'citas'} ? 'active' : ''">
+                <i class="fas fa-calendar-alt"></i> Mis Citas
+            </a>
+            <a th:href="@{/dashboard/buscar-medicos}" class="menu-item" th:classappend="${seccionActiva == 'medicos'} ? 'active' : ''">
+                <i class="fas fa-user-md"></i> Buscar Médicos
+            </a>
+            <a th:href="@{/dashboard/historial-clinico}" class="menu-item" th:classappend="${seccionActiva == 'historial'} ? 'active' : ''">
+                <i class="fas fa-file-medical"></i> Historial Clínico
+            </a>
+            <a href="#" class="menu-item" th:classappend="${seccionActiva == 'perfil'} ? 'active' : ''">
+                <i class="fas fa-user"></i> Mi Perfil
+            </a>
+        </nav>
+        
+        <div class="sidebar-footer">
+            <a th:href="@{/logout}" class="menu-item logout">
+                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+            </a>
+        </div>
+    </aside>
+
+
+    <header th:fragment="topbar(tituloPantalla)" class="topbar">
+        <div class="topbar-left">
+            <h2 th:text="${tituloPantalla}">Título por Defecto</h2>
+        </div>
+        <div class="topbar-right">
+            <div class="user-info">
+                <span class="user-name">Admin MediGest</span>
+                <div class="user-avatar">AD</div>
+            </div>
+        </div>
+    </header>
+
+</body>
+</html>
