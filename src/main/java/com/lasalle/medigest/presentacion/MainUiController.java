@@ -9,7 +9,7 @@ public class MainUiController {
     // Redirige la raíz (http://localhost:8080/) directo al login
     @GetMapping("/")
     public String index() {
-        return "login";
+        return "index";
     }
 
     // Ruta para el Login (templates/login.html)

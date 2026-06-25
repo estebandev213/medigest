@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediGest - Tu Agenda Médica en un Solo Click</title>
+    <link rel="stylesheet" th:href="@{/styles/global.css}">
+    <link rel="stylesheet" th:href="@{/styles/landing.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <header class="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo">Medi<span>Gest</span></a>
+            <nav class="nav-menu">
+                <a href="#sobre-nosotros">Sobre Nosotros</a>
+                <a href="#medicos">Médicos</a>
+                <a href="#contacto">Contáctanos</a>
+            </nav>
+            <button class="btn-login">Iniciar Sesión</button>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Tu salud no espera. Agenda tu cita médica hoy.</h1>
+            <p>En MediGest conectamos a los mejores especialistas de la salud contigo. Encuentra a tu médico ideal, revisa horarios disponibles y asegura tu atención médica en menos de dos minutos, sin filas ni llamadas intermedias.</p>
+            
+            <div class="hero-banner-container">
+                <img th:src="@{/images/portadamedigest.png}" alt="Plataforma de Citas Médicas MediGest" class="hero-banner">
+            </div>
+        </div>
+    </section>
+
+    <section id="sobre-nosotros" class="about-section">
+        <div class="about-content">
+            <h2>Transformando el acceso a la salud digital</h2>
+            <p class="about-lead">En <strong>MediGest</strong>, no solo programamos herramientas; redefinimos la experiencia de ir al médico. Nacimos con la firme convicción de que gestionar una cita de salud debe ser tan fácil, ágil y transparente como cualquier otra interacción digital de tu día a día.</p>
+            <p>Somos la plataforma líder que unifica en un solo ecosistema a pacientes y profesionales médicos. Eliminamos las barreras geográficas y burocráticas, permitiéndote tomar el control absoluto de tu bienestar y el de tu familia desde cualquier dispositivo. Respaldados por la mejor tecnología de agendamiento inmediato y almacenamiento seguro de datos, en MediGest tu tranquilidad médica es nuestra mayor prioridad.</p>
+        </div>
+    </section>
+
+    <section id="medicos" class="doctors-section">
+        <h2>Especialistas Destacados</h2>
+        <p class="subtitle">Agenda tu consulta directamente con los profesionales mejor calificados de nuestra red.</p>
+        
+        <div class="carousel-container">
+            <button class="carousel-btn prev-btn"><i class="fas fa-chevron-left"></i></button>
+            
+            <div class="carousel-track-container">
+                <div class="carousel-track">
+                    
+                    <div class="doctor-card">
+                        <img th:src="@{/images/medico01.png}" alt="Dr. Alejandro Ruiz" class="doctor-avatar-img">
+                        <h3>Dr. Leonidas Frames</h3>
+                        <span class="specialty">Cardiología</span>
+                        <p>Especialista en salud cardiovascular con más de 10 años de experiencia clínica atendiendo en MediGest.</p>
+                    </div>
+
+                    <div class="doctor-card">
+                        <img th:src="@{/images/medico02.png}" alt="Dra. Elena Mendoza" class="doctor-avatar-img">
+                        <h3>Dra. Franco Newvillage</h3>
+                        <span class="specialty">Pediatría</span>
+                        <p>Dedicada al cuidado integral, control de crecimiento y desarrollo saludable de los más pequeños.</p>
+                    </div>
+
+                    <div class="doctor-card">
+                        <img th:src="@{/images/medico03.png}" alt="Dr. Carlos Villa" class="doctor-avatar-img">
+                        <h3>Dr. Keiko Carpio</h3>
+                        <span class="specialty">Urología</span>
+                        <p>Experto en medicina deportiva, articulaciones y recuperación avanzada de lesiones óseas.</p>
+                    </div>
+
+                </div>
+            </div>
+            
+            <button class="carousel-btn next-btn"><i class="fas fa-chevron-right"></i></button>
+        </div>
+    </section>
+
+    <section id="contacto" class="contact-section">
+        <h2>Centro de Soporte MediGest</h2>
+        <p>¿Tienes dudas sobre cómo usar la aplicación o deseas dar de alta tu perfil médico en nuestra plataforma?</p>
+        <p class="contact-info"><strong>Atención al Cliente:</strong> soporte@medigest.com | <strong>Línea Directa:</strong> +1 800 MEDI GEST</p>
+    </section>
+
+    <script th:src="@{/js/script.js}"></script>
+</body>
+</html>
