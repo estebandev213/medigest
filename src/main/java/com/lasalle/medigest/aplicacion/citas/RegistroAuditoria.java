@@ -9,8 +9,8 @@ public class RegistroAuditoria implements Observer {
 
     @Override
     public void actualizar(Cita cita) {
-        String pacienteDni = cita.getPaciente() != null ? cita.getPaciente().getDni() : "N/A";
-        System.out.printf("[AUDITORIA] Cita #%d | Paciente DNI: %s | Médico: %s | Estado: %s%n",
-                cita.getId(), pacienteDni, cita.getMedicoAsignado(), cita.getEstado());
+        // Imprime un log en consola simulando el registro histórico de auditoría
+        System.out.println("[AUDITORÍA LOG] Cita ID: " + cita.getId() 
+                + " ha sido modificada. Nuevo estado registrado: " + cita.getEstado());
     }
 }

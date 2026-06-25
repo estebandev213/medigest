@@ -1,6 +1,6 @@
 #FileLock
-#Mon Jun 22 18:55:36 COT 2026
-hostName=SNTX4.mshome.net
-id=19ef1c2c4ffba08797ef58a9052323a4053400561ea
+#Tue Jun 23 21:19:27 COT 2026
+server=192.168.100.8\:51629
+hostName=LAPTOP-PNT8FSGJ
 method=file
-server=192.168.80.1\:60027
+id=19ef76cdf2cbccb4c84dea84d0529051efaffa6dbdf

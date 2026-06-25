@@ -3,7 +3,6 @@ package com.lasalle.medigest.dominio.citas;
 import com.lasalle.medigest.dominio.admision.Paciente;
 import jakarta.persistence.*;
 import lombok.*;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -46,7 +45,9 @@ public class Cita {
     private List<Observer> observadores;
 
     public void agregarObservador(Observer obs) {
-        if (observadores == null) observadores = new ArrayList<>();
+        if (observadores == null) {
+            observadores = new ArrayList<>();
+        }
         observadores.add(obs);
     }
 

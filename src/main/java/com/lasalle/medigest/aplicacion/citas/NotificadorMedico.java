@@ -9,7 +9,9 @@ public class NotificadorMedico implements Observer {
 
     @Override
     public void actualizar(Cita cita) {
-        System.out.printf("[NOTIFICADOR] Médico '%s' notificado — cita #%d cambió a %s%n",
-                cita.getMedicoAsignado(), cita.getId(), cita.getEstado());
+        // Imprime una alerta en consola simulando la notificación al médico asignado
+        System.out.println("\n[NOTIFICACIÓN MÉDICA] Alerta para el Dr(a). " + cita.getMedicoAsignado()
+                + " -> La cita del paciente con ID " + (cita.getPaciente() != null ? cita.getPaciente().getId() : "N/A")
+                + " ha cambiado al estado: " + cita.getEstado());
     }
 }
