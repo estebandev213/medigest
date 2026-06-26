@@ -3,6 +3,7 @@ package com.lasalle.medigest.aplicacion.atencion;
 import com.lasalle.medigest.dominio.admision.Paciente;
 import com.lasalle.medigest.dominio.atencion.HistoriaClinica;
 import com.lasalle.medigest.dominio.citas.Cita;
+import com.lasalle.medigest.dominio.excepcion.RecursoNoEncontradoException;
 import com.lasalle.medigest.persistencia.admision.PacienteRepository;
 import com.lasalle.medigest.persistencia.atencion.HistoriaClinicaRepository;
 import com.lasalle.medigest.persistencia.citas.CitaRepository;
@@ -21,10 +22,10 @@ public class ServicioAtencion {
     private final CitaRepository citaRepository;
 
     public HistoriaClinica crearHistoriaClinica(Long pacienteId, Long citaId, String medicoTratante,
-                                                String diagnostico, String alergias,
-                                                String resultados, String tratamiento) {
+                                                 String diagnostico, String alergias,
+                                                 String resultados, String tratamiento) {
         Paciente paciente = pacienteRepository.findById(pacienteId)
-                .orElseThrow(() -> new IllegalArgumentException("Paciente no encontrado: " + pacienteId));
+                .orElseThrow(() -> new RecursoNoEncontradoException("Paciente no encontrado: " + pacienteId));
         Cita cita = citaId != null ? citaRepository.findById(citaId).orElse(null) : null;
 
         DirectorAtencion director = new DirectorAtencion(
@@ -35,7 +36,7 @@ public class ServicioAtencion {
 
     public HistoriaClinica agregarResultadosLaboratorio(Long historiaId, String resultados) {
         HistoriaClinica historia = historiaClinicaRepository.findById(historiaId)
-                .orElseThrow(() -> new IllegalArgumentException("Historia clínica no encontrada: " + historiaId));
+                .orElseThrow(() -> new RecursoNoEncontradoException("Historia clínica no encontrada: " + historiaId));
         historia.setResultadosLaboratorio(resultados);
         return historiaClinicaRepository.save(historia);
     }

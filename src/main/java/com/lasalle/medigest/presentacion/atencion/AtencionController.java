@@ -1,13 +1,16 @@
 package com.lasalle.medigest.presentacion.atencion;
 
 import com.lasalle.medigest.aplicacion.atencion.ServicioAtencion;
-import com.lasalle.medigest.dominio.atencion.HistoriaClinica;
+import com.lasalle.medigest.presentacion.atencion.dto.AgregarResultadosRequest;
+import com.lasalle.medigest.presentacion.atencion.dto.CrearHistoriaRequest;
+import com.lasalle.medigest.presentacion.atencion.dto.HistoriaClinicaResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/atencion")
@@ -18,37 +21,41 @@ public class AtencionController {
 
     // RF06 — crear historia clínica (Builder + Director)
     @PostMapping("/historias")
-    public ResponseEntity<HistoriaClinica> crearHistoria(@RequestBody Map<String, Object> req) {
-        Long pacienteId = Long.valueOf(req.get("pacienteId").toString());
-        Long citaId     = req.get("citaId") != null ? Long.valueOf(req.get("citaId").toString()) : null;
-        String medico       = (String) req.get("medicoTratante");
-        String diagnostico  = (String) req.get("diagnostico");
-        String alergias     = (String) req.getOrDefault("alergias", "");
-        String resultados   = (String) req.getOrDefault("resultadosLaboratorio", "");
-        String tratamiento  = (String) req.getOrDefault("tratamiento", "");
-
-        return ResponseEntity.ok(
-            servicioAtencion.crearHistoriaClinica(pacienteId, citaId, medico, diagnostico, alergias, resultados, tratamiento)
+    public ResponseEntity<HistoriaClinicaResponse> crearHistoria(@Valid @RequestBody CrearHistoriaRequest req) {
+        var historia = servicioAtencion.crearHistoriaClinica(
+                req.pacienteId(),
+                req.citaId(),
+                req.medicoTratante(),
+                req.diagnostico(),
+                req.alergias(),
+                req.resultadosLaboratorio(),
+                req.tratamiento()
         );
+        return ResponseEntity.status(HttpStatus.CREATED).body(HistoriaClinicaResponse.desde(historia));
     }
 
     // agregar resultados de laboratorio
     @PatchMapping("/historias/{id}/laboratorio")
-    public ResponseEntity<HistoriaClinica> agregarResultados(
-            @PathVariable Long id, @RequestBody Map<String, String> body) {
-        return ResponseEntity.ok(servicioAtencion.agregarResultadosLaboratorio(id, body.get("resultados")));
+    public ResponseEntity<HistoriaClinicaResponse> agregarResultados(
+            @PathVariable Long id, @Valid @RequestBody AgregarResultadosRequest body) {
+        var historia = servicioAtencion.agregarResultadosLaboratorio(id, body.resultados());
+        return ResponseEntity.ok(HistoriaClinicaResponse.desde(historia));
     }
 
     // RF07 — consultar historia clínica
     @GetMapping("/historias/{id}")
-    public ResponseEntity<HistoriaClinica> buscarPorId(@PathVariable Long id) {
+    public ResponseEntity<HistoriaClinicaResponse> buscarPorId(@PathVariable Long id) {
         return servicioAtencion.buscarPorId(id)
+                .map(HistoriaClinicaResponse::desde)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/historias/paciente/{pacienteId}")
-    public ResponseEntity<List<HistoriaClinica>> listarPorPaciente(@PathVariable Long pacienteId) {
-        return ResponseEntity.ok(servicioAtencion.listarPorPaciente(pacienteId));
+    public ResponseEntity<List<HistoriaClinicaResponse>> listarPorPaciente(@PathVariable Long pacienteId) {
+        var historias = servicioAtencion.listarPorPaciente(pacienteId).stream()
+                .map(HistoriaClinicaResponse::desde)
+                .toList();
+        return ResponseEntity.ok(historias);
     }
 }
