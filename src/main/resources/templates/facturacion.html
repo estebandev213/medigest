@@ -16,6 +16,8 @@
 
         <div class="main-wrapper">
 
+            <div th:replace="~{fragments/dashboard-nav :: flashAlert}"></div>
+
             <div th:replace="~{fragments/dashboard-nav :: topbar('Módulo de Facturación', 'Nueva Factura', 'fas fa-file-invoice-dollar', 'modalFactura')}"></div>
 
             <main class="main-content">

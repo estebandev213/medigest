@@ -16,6 +16,8 @@
 
         <div class="main-wrapper">
 
+            <div th:replace="~{fragments/dashboard-nav :: flashAlert}"></div>
+
             <div th:replace="~{fragments/dashboard-nav :: topbar('Historial Clínico', 'Nueva Historia', 'fas fa-file-medical', 'modalHistoria')}"></div>
 
             <main class="main-content">
@@ -24,18 +26,18 @@
                     <div class="kpi-card text-primary">
                         <h3>Historias Registradas</h3>
                         <p class="kpi-value" th:text="${totalHistorias}">0</p>
-                        <span class="kpi-sub">Atenciones documentadas</span>
+                        <span class="kpi-sub">RF06 · RF07 Atención Médica</span>
                     </div>
                     <div class="kpi-card text-success">
-                        <h3>Módulo</h3>
-                        <p class="kpi-value">Atención</p>
-                        <span class="kpi-sub">Patrón Builder activo</span>
+                        <h3>Patrón</h3>
+                        <p class="kpi-value">Builder</p>
+                        <span class="kpi-sub">DirectorAtencion + HistoriaClinicaBuilder</span>
                     </div>
                 </div>
 
                 <form class="filter-bar" th:action="@{/dashboard/historial-clinico}" method="get">
                     <div class="form-group filter-group">
-                        <label for="pacienteId">Filtrar por paciente</label>
+                        <label for="pacienteId">Filtrar por paciente (RF07)</label>
                         <select id="pacienteId" name="pacienteId">
                             <option value="">— Todos los pacientes —</option>
                             <option th:each="p : ${listaPacientes}"
@@ -57,10 +59,12 @@
                             <tr>
                                 <th>ID</th>
                                 <th>Paciente</th>
+                                <th>Cita</th>
                                 <th>Médico Tratante</th>
                                 <th>Fecha</th>
                                 <th>Diagnóstico</th>
-                                <th>Tratamiento</th>
+                                <th>Laboratorio</th>
+                                <th>Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -74,13 +78,31 @@
                                         <span th:text="${historia.paciente.nombres + ' ' + historia.paciente.apellidos}">Paciente</span>
                                     </div>
                                 </td>
+                                <td th:text="${historia.cita != null ? 'Cita #' + historia.cita.id : '—'}">—</td>
                                 <td th:text="${historia.medicoTratante}">Dr. López</td>
                                 <td th:text="${historia.fechaAtencion != null ? historia.fechaAtencion : '—'}">2026-06-26</td>
                                 <td class="cell-truncate" th:text="${historia.diagnostico}">Diagnóstico</td>
-                                <td class="cell-truncate" th:text="${historia.tratamiento != null and !#strings.isEmpty(historia.tratamiento) ? historia.tratamiento : '—'}">Tratamiento</td>
+                                <td>
+                                    <span th:if="${historia.resultadosLaboratorio != null and !#strings.isEmpty(historia.resultadosLaboratorio)}"
+                                          class="badge-tipo">Con resultados</span>
+                                    <span th:unless="${historia.resultadosLaboratorio != null and !#strings.isEmpty(historia.resultadosLaboratorio)}"
+                                          class="badge-tipo badge-muted">Pendiente</span>
+                                </td>
+                                <td class="actions-cell">
+                                    <a th:href="@{/dashboard/historial-clinico/{id}(id=${historia.id})}"
+                                       class="btn-action" title="Ver detalle (RF07)">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <button type="button"
+                                            class="btn-action btn-lab"
+                                            title="Agregar resultados de laboratorio"
+                                            th:attr="data-modal-target='modalLab-' + ${historia.id}">
+                                        <i class="fas fa-flask"></i>
+                                    </button>
+                                </td>
                             </tr>
                             <tr th:if="${#lists.isEmpty(historias)}">
-                                <td colspan="6" class="table-empty">
+                                <td colspan="8" class="table-empty">
                                     No hay historias clínicas registradas<span th:if="${pacienteFiltro != null}"> para este paciente</span>.
                                 </td>
                             </tr>
@@ -92,10 +114,11 @@
         </div>
     </div>
 
+    <!-- Modal: Crear Historia (RF06) -->
     <div id="modalHistoria" class="modal-overlay hidden">
         <div class="modal-content-box modal-wide">
             <div class="modal-header">
-                <h3>Crear Historia Clínica</h3>
+                <h3>Crear Historia Clínica (RF06)</h3>
                 <button type="button" class="close-btn" data-modal-close="modalHistoria">&times;</button>
             </div>
 
@@ -105,7 +128,7 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label for="histPacienteId">Paciente</label>
-                        <select id="histPacienteId" name="pacienteId" required>
+                        <select id="histPacienteId" name="pacienteId" required onchange="filtrarCitasPorPaciente()">
                             <option value="" disabled selected>-- Seleccione paciente --</option>
                             <option th:each="p : ${listaPacientes}"
                                     th:value="${p.id}"
@@ -114,9 +137,15 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="citaId">ID Cita (opcional)</label>
-                        <input type="text" id="citaId" name="citaId" placeholder="Ej. 1"
-                               oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                        <label for="citaId">Cita vinculada (opcional)</label>
+                        <select id="citaId" name="citaId">
+                            <option value="">— Sin vincular cita —</option>
+                            <option th:each="c : ${listaCitas}"
+                                    th:value="${c.id}"
+                                    th:attr="data-paciente-id=${c.paciente != null ? c.paciente.id : ''}"
+                                    th:text="${'Cita #' + c.id + ' — ' + (c.paciente != null ? c.paciente.nombres + ' ' + c.paciente.apellidos : 'Paciente') + ' · ' + c.especialidad}">
+                            </option>
+                        </select>
                     </div>
                 </div>
 
@@ -138,9 +167,9 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="resultadosLaboratorio">Resultados de Laboratorio</label>
+                    <label for="resultadosLaboratorio">Resultados de Laboratorio (opcional al crear)</label>
                     <textarea id="resultadosLaboratorio" name="resultadosLaboratorio" rows="2"
-                              placeholder="Resultados relevantes..."></textarea>
+                              placeholder="Puede agregarlos después con PATCH laboratorio..."></textarea>
                 </div>
 
                 <div class="form-group">
@@ -157,6 +186,52 @@
         </div>
     </div>
 
+    <!-- Modales: Agregar laboratorio por historia -->
+    <div th:each="historia : ${historias}"
+         th:id="'modalLab-' + ${historia.id}"
+         class="modal-overlay hidden">
+        <div class="modal-content-box">
+            <div class="modal-header">
+                <h3 th:text="'Laboratorio — Historia #' + ${historia.id}">Laboratorio</h3>
+                <button type="button" class="close-btn" th:attr="data-modal-close='modalLab-' + ${historia.id}">&times;</button>
+            </div>
+
+            <form th:action="@{/dashboard/historial-clinico/{id}/laboratorio(id=${historia.id})}" method="post">
+                <input type="hidden" th:if="${_csrf}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+                <p class="field-hint" th:if="${historia.resultadosLaboratorio != null and !#strings.isEmpty(historia.resultadosLaboratorio)}">
+                    Resultados actuales: <strong th:text="${historia.resultadosLaboratorio}">—</strong>
+                    (al guardar se reemplazarán)
+                </p>
+
+                <div class="form-group">
+                    <label th:attr="for='resultados-' + ${historia.id}">Resultados de Laboratorio</label>
+                    <textarea th:id="'resultados-' + ${historia.id}"
+                              name="resultados" rows="4"
+                              placeholder="Ej. Hemoglobina: 14.2 g/dL, Glucosa: 95 mg/dL..."
+                              required></textarea>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" th:attr="data-modal-close='modalLab-' + ${historia.id}">Cancelar</button>
+                    <button type="submit" class="btn-submit">Guardar Resultados</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script th:src="@{/scripts/dashboard.js}"></script>
+    <script>
+        function filtrarCitasPorPaciente() {
+            const pacienteId = document.getElementById('histPacienteId').value;
+            const citaSelect = document.getElementById('citaId');
+            Array.from(citaSelect.options).forEach(function (opt, index) {
+                if (index === 0) return;
+                const optPaciente = opt.getAttribute('data-paciente-id');
+                opt.hidden = pacienteId && optPaciente !== pacienteId;
+            });
+            citaSelect.value = '';
+        }
+    </script>
 </body>
 </html>

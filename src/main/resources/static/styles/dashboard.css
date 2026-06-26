@@ -817,3 +817,151 @@ body {
     padding: 8px 14px;
     font-size: 13px;
 }
+
+.badge-muted {
+    background-color: var(--color-background);
+    color: var(--color-text-secondary);
+}
+
+.actions-cell {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+.btn-lab:hover {
+    color: var(--color-info-text);
+    border-color: var(--color-info-text);
+}
+
+/* Detalle de historia clínica */
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    margin-bottom: 4px;
+}
+
+.back-link:hover {
+    color: var(--color-primary);
+}
+
+.topbar-left h2 {
+    margin: 0;
+}
+
+.detail-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.detail-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius);
+    padding: 20px;
+}
+
+.detail-card-wide {
+    grid-column: 1 / -1;
+}
+
+.detail-card h3 {
+    margin: 0 0 16px;
+    font-size: 15px;
+    color: var(--color-primary-dark);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.detail-list {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 8px 16px;
+    margin: 0;
+}
+
+.detail-list dt {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+}
+
+.detail-list dd {
+    margin: 0;
+    font-size: 14px;
+    color: var(--color-text-primary);
+}
+
+.detail-text {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--color-text-primary);
+    white-space: pre-wrap;
+}
+
+.lab-results {
+    background: var(--color-info-bg);
+    padding: 14px;
+    border-radius: var(--border-radius);
+}
+
+.detail-empty {
+    color: var(--color-text-secondary);
+    font-size: 14px;
+    font-style: italic;
+    margin: 0;
+}
+
+@media (max-width: 768px) {
+    .detail-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Flash alerts */
+.flash-alert-wrapper,
+.main-wrapper > .flash-alert {
+    margin: 0;
+}
+
+.flash-alert {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.flash-alert.flash-success {
+    background-color: var(--color-success-bg);
+    color: var(--color-success-text);
+}
+
+.flash-alert.flash-error {
+    background-color: var(--color-danger-bg);
+    color: var(--color-danger-text);
+}
+
+.flash-close {
+    margin-left: auto;
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: inherit;
+    opacity: 0.7;
+    line-height: 1;
+}
+
+.flash-close:hover {
+    opacity: 1;
+}

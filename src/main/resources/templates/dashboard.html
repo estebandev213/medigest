@@ -16,6 +16,8 @@
 
         <div class="main-wrapper">
 
+            <div th:replace="~{fragments/dashboard-nav :: flashAlert}"></div>
+
             <div th:replace="~{fragments/dashboard-nav :: topbar('Mis Citas Médicas', 'Nueva Cita', 'fas fa-plus', 'modalCita')}"></div>
 
             <main class="main-content">
@@ -96,7 +98,8 @@
                                         <i class="fas fa-stethoscope"></i> Marcar Atendida
                                     </button>
                                 </form>
-                                <form th:action="@{/dashboard/citas/{id}/cancelar(id=${cita.id})}" method="post">
+                                <form th:action="@{/dashboard/citas/{id}/cancelar(id=${cita.id})}" method="post"
+                                      data-confirm="¿Está seguro de cancelar esta cita?">
                                     <input type="hidden" th:if="${_csrf}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                                     <button type="submit" class="btn-card-action btn-danger">
                                         <i class="fas fa-times"></i> Cancelar
@@ -106,6 +109,12 @@
                         </div>
                     </div>
                 </div>
+
+                <p th:if="${#lists.isEmpty(misCitas)}" class="page-hint">
+                    <i class="fas fa-calendar-plus"></i>
+                    No hay citas programadas. Use «Nueva Cita» para agendar la primera.
+                    <span th:if="${#lists.isEmpty(listaPacientes)}"> Primero registre un paciente en el módulo Pacientes.</span>
+                </p>
 
             </main>
         </div>

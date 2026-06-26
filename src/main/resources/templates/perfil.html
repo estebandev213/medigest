@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediGest - Mi Perfil</title>
+    <link rel="stylesheet" th:href="@{/styles/global.css}">
+    <link rel="stylesheet" th:href="@{/styles/dashboard.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="dashboard-layout">
+
+        <div th:replace="~{fragments/dashboard-nav :: sidebar('perfil')}"></div>
+
+        <div class="main-wrapper">
+
+            <div th:replace="~{fragments/dashboard-nav :: flashAlert}"></div>
+
+            <div th:replace="~{fragments/dashboard-nav :: topbar('Mi Perfil', '', '', '')}"></div>
+
+            <main class="main-content">
+
+                <div class="detail-grid">
+                    <div class="detail-card">
+                        <h3><i class="fas fa-user-shield"></i> Cuenta</h3>
+                        <dl class="detail-list">
+                            <dt>Usuario</dt>
+                            <dd th:text="${usuario}">admin</dd>
+                            <dt>Rol</dt>
+                            <dd>Administrador del sistema</dd>
+                            <dt>Sesión</dt>
+                            <dd>Activa</dd>
+                        </dl>
+                    </div>
+                    <div class="detail-card">
+                        <h3><i class="fas fa-hospital"></i> Sistema</h3>
+                        <dl class="detail-list">
+                            <dt>Aplicación</dt>
+                            <dd>MediGest v1.0</dd>
+                            <dt>Institución</dt>
+                            <dd>La Salle — Fundamentos de Diseño de Software</dd>
+                            <dt>Módulos activos</dt>
+                            <dd>Admisión, Citas, Atención, Facturación</dd>
+                        </dl>
+                    </div>
+                </div>
+
+                <p class="page-hint">
+                    <i class="fas fa-info-circle"></i>
+                    Credenciales de demo: usuario <strong>admin</strong> / contraseña <strong>admin</strong>.
+                </p>
+
+            </main>
+        </div>
+    </div>
+
+    <script th:src="@{/scripts/dashboard.js}"></script>
+</body>
+</html>

@@ -23,7 +23,7 @@
             <a th:href="@{/dashboard/facturacion}" class="menu-item" th:classappend="${seccionActiva == 'facturacion'} ? 'active' : ''">
                 <i class="fas fa-file-invoice-dollar"></i> Facturación
             </a>
-            <a href="#" class="menu-item" th:classappend="${seccionActiva == 'perfil'} ? 'active' : ''">
+            <a th:href="@{/dashboard/perfil}" class="menu-item" th:classappend="${seccionActiva == 'perfil'} ? 'active' : ''">
                 <i class="fas fa-user"></i> Mi Perfil
             </a>
         </nav>
@@ -33,6 +33,14 @@
             </a>
         </div>
     </aside>
+
+    <div th:fragment="flashAlert">
+        <div th:if="${mensaje}" th:class="'flash-alert flash-' + (${tipoMensaje} ?: 'success')">
+            <i th:class="${tipoMensaje == 'error'} ? 'fas fa-exclamation-circle' : 'fas fa-check-circle'"></i>
+            <span th:text="${mensaje}">Mensaje</span>
+            <button type="button" class="flash-close" onclick="this.closest('.flash-alert').remove()" aria-label="Cerrar">&times;</button>
+        </div>
+    </div>
 
     <header th:fragment="topbar(titulo, accionTexto, accionIcono, modalId)" class="topbar">
         <div class="topbar-left">

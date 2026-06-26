@@ -148,6 +148,13 @@
     background-color: var(--color-primary-hover);
 }
 
+.login-hint {
+    margin-top: 1rem;
+    font-size: 0.85rem;
+    color: var(--color-text-secondary);
+    text-align: center;
+}
+
 
 /* ==========================================================================
    Responsive

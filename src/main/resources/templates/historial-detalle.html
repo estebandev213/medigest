@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediGest - Detalle Historia Clínica</title>
+    <link rel="stylesheet" th:href="@{/styles/global.css}">
+    <link rel="stylesheet" th:href="@{/styles/dashboard.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="dashboard-layout">
+
+        <div th:replace="~{fragments/dashboard-nav :: sidebar('historial')}"></div>
+
+        <div class="main-wrapper">
+
+            <div th:replace="~{fragments/dashboard-nav :: flashAlert}"></div>
+
+            <header class="topbar">
+                <div class="topbar-left">
+                    <a th:href="@{/dashboard/historial-clinico}" class="back-link">
+                        <i class="fas fa-arrow-left"></i> Volver al listado
+                    </a>
+                    <h2 th:text="'Historia Clínica #' + ${historia.id}">Historia #1</h2>
+                </div>
+                <div class="topbar-right">
+                    <button type="button" class="btn-primary btn-open-modal" data-modal-target="modalLab">
+                        <i class="fas fa-flask"></i>
+                        <span>Agregar Laboratorio</span>
+                    </button>
+                    <div class="user-info">
+                        <span class="user-name">Admin MediGest</span>
+                        <div class="user-avatar">AD</div>
+                    </div>
+                </div>
+            </header>
+
+            <main class="main-content">
+
+                <div class="detail-grid">
+
+                    <div class="detail-card">
+                        <h3><i class="fas fa-user-injured"></i> Paciente</h3>
+                        <dl class="detail-list">
+                            <dt>Nombre</dt>
+                            <dd th:text="${historia.paciente.nombres + ' ' + historia.paciente.apellidos}">Nombre</dd>
+                            <dt>DNI</dt>
+                            <dd th:text="${historia.paciente.dni}">12345678</dd>
+                            <dt>ID Paciente</dt>
+                            <dd th:text="${historia.paciente.id}">1</dd>
+                            <dt>Seguro</dt>
+                            <dd><span class="badge-tipo" th:text="${historia.paciente.tipo}">SIS</span></dd>
+                        </dl>
+                    </div>
+
+                    <div class="detail-card">
+                        <h3><i class="fas fa-calendar-check"></i> Atención</h3>
+                        <dl class="detail-list">
+                            <dt>Fecha</dt>
+                            <dd th:text="${historia.fechaAtencion != null ? historia.fechaAtencion : '—'}">2026-06-26</dd>
+                            <dt>Médico Tratante</dt>
+                            <dd th:text="${historia.medicoTratante}">Dr. López</dd>
+                            <dt>Cita vinculada</dt>
+                            <dd th:if="${historia.cita != null}">
+                                Cita #<span th:text="${historia.cita.id}">1</span>
+                                — <span th:text="${historia.cita.especialidad}">Especialidad</span>
+                                (<span th:text="${historia.cita.estado}">CONFIRMADA</span>)
+                            </dd>
+                            <dd th:unless="${historia.cita != null}">Sin cita asociada</dd>
+                        </dl>
+                    </div>
+
+                    <div class="detail-card detail-card-wide">
+                        <h3><i class="fas fa-stethoscope"></i> Diagnóstico y Tratamiento</h3>
+                        <dl class="detail-list">
+                            <dt>Diagnóstico</dt>
+                            <dd class="detail-text" th:text="${historia.diagnostico}">Diagnóstico</dd>
+                            <dt>Alergias</dt>
+                            <dd class="detail-text" th:text="${historia.alergias != null and !#strings.isEmpty(historia.alergias) ? historia.alergias : 'Ninguna registrada'}">—</dd>
+                            <dt>Tratamiento</dt>
+                            <dd class="detail-text" th:text="${historia.tratamiento != null and !#strings.isEmpty(historia.tratamiento) ? historia.tratamiento : '—'}">—</dd>
+                        </dl>
+                    </div>
+
+                    <div class="detail-card detail-card-wide">
+                        <h3><i class="fas fa-flask"></i> Resultados de Laboratorio</h3>
+                        <p th:if="${historia.resultadosLaboratorio != null and !#strings.isEmpty(historia.resultadosLaboratorio)}"
+                           class="detail-text lab-results" th:text="${historia.resultadosLaboratorio}">
+                            Resultados
+                        </p>
+                        <p th:unless="${historia.resultadosLaboratorio != null and !#strings.isEmpty(historia.resultadosLaboratorio)}"
+                           class="detail-empty">
+                            Sin resultados registrados. Use «Agregar Laboratorio» para completar (PATCH /api/atencion/historias/{id}/laboratorio).
+                        </p>
+                    </div>
+
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <div id="modalLab" class="modal-overlay hidden">
+        <div class="modal-content-box">
+            <div class="modal-header">
+                <h3>Agregar Resultados de Laboratorio</h3>
+                <button type="button" class="close-btn" data-modal-close="modalLab">&times;</button>
+            </div>
+
+            <form th:action="@{/dashboard/historial-clinico/{id}/laboratorio(id=${historia.id})}" method="post">
+                <input type="hidden" th:if="${_csrf}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+                <p class="field-hint" th:if="${historia.resultadosLaboratorio != null and !#strings.isEmpty(historia.resultadosLaboratorio)}">
+                    Al guardar se reemplazarán los resultados actuales.
+                </p>
+
+                <div class="form-group">
+                    <label for="resultados">Resultados</label>
+                    <textarea id="resultados" name="resultados" rows="5"
+                              th:text="${historia.resultadosLaboratorio}"
+                              placeholder="Ingrese los resultados de laboratorio..." required></textarea>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" data-modal-close="modalLab">Cancelar</button>
+                    <button type="submit" class="btn-submit">Guardar Resultados</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script th:src="@{/scripts/dashboard.js}"></script>
+</body>
+</html>

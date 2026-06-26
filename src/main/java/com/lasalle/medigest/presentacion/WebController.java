@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -90,7 +91,8 @@ public class WebController {
             @RequestParam String medicoAsignado,
             @RequestParam String especialidad,
             @RequestParam String fechaHora,
-            @RequestParam String motivo) {
+            @RequestParam String motivo,
+            RedirectAttributes redirectAttributes) {
 
         String redirect = requiereSesion(session);
         if (redirect != null) {
@@ -109,36 +111,40 @@ public class WebController {
                 .build();
 
         servicioCitas.programarCita(cita);
+        flashExito(redirectAttributes, "Cita programada correctamente.");
         return "redirect:/dashboard";
     }
 
     @PostMapping("/dashboard/citas/{id}/confirmar")
-    public String confirmarCita(HttpSession session, @PathVariable Long id) {
+    public String confirmarCita(HttpSession session, @PathVariable Long id, RedirectAttributes redirectAttributes) {
         String redirect = requiereSesion(session);
         if (redirect != null) {
             return redirect;
         }
         servicioCitas.confirmarCita(id);
+        flashExito(redirectAttributes, "Cita confirmada.");
         return "redirect:/dashboard";
     }
 
     @PostMapping("/dashboard/citas/{id}/cancelar")
-    public String cancelarCita(HttpSession session, @PathVariable Long id) {
+    public String cancelarCita(HttpSession session, @PathVariable Long id, RedirectAttributes redirectAttributes) {
         String redirect = requiereSesion(session);
         if (redirect != null) {
             return redirect;
         }
         servicioCitas.cancelarCita(id);
+        flashExito(redirectAttributes, "Cita cancelada.");
         return "redirect:/dashboard";
     }
 
     @PostMapping("/dashboard/citas/{id}/atender")
-    public String marcarAtendida(HttpSession session, @PathVariable Long id) {
+    public String marcarAtendida(HttpSession session, @PathVariable Long id, RedirectAttributes redirectAttributes) {
         String redirect = requiereSesion(session);
         if (redirect != null) {
             return redirect;
         }
         servicioCitas.cambiarEstadoGenerico(id, EstadoCita.ATENDIDA);
+        flashExito(redirectAttributes, "Cita marcada como atendida.");
         return "redirect:/dashboard";
     }
 
@@ -175,7 +181,8 @@ public class WebController {
             @RequestParam(required = false, defaultValue = "") String direccion,
             @RequestParam(required = false, defaultValue = "") String email,
             @RequestParam(required = false, defaultValue = "") String fechaNacimiento,
-            @RequestParam String tipo) {
+            @RequestParam String tipo,
+            RedirectAttributes redirectAttributes) {
 
         String redirect = requiereSesion(session);
         if (redirect != null) {
@@ -193,7 +200,12 @@ public class WebController {
                 .tipo(TipoPaciente.valueOf(tipo.toUpperCase()))
                 .build();
 
-        servicioAdmision.registrarPaciente(paciente);
+        try {
+            servicioAdmision.registrarPaciente(paciente);
+            flashExito(redirectAttributes, "Paciente registrado correctamente.");
+        } catch (IllegalStateException e) {
+            flashError(redirectAttributes, e.getMessage());
+        }
         return "redirect:/dashboard/pacientes";
     }
 
@@ -217,8 +229,28 @@ public class WebController {
         model.addAttribute("historias", historias);
         model.addAttribute("totalHistorias", historias.size());
         model.addAttribute("listaPacientes", servicioAdmision.listarTodos());
+        model.addAttribute("listaCitas", servicioCitas.listarTodas());
         model.addAttribute("pacienteFiltro", pacienteId);
         return "historial";
+    }
+
+    @GetMapping("/dashboard/historial-clinico/{id}")
+    public String detalleHistoria(
+            HttpSession session,
+            @PathVariable Long id,
+            Model model) {
+
+        String redirect = requiereSesion(session);
+        if (redirect != null) {
+            return redirect;
+        }
+
+        return servicioAtencion.buscarPorId(id)
+                .map(historia -> {
+                    model.addAttribute("historia", historia);
+                    return "historial-detalle";
+                })
+                .orElse("redirect:/dashboard/historial-clinico");
     }
 
     @PostMapping("/dashboard/historial-clinico/crear")
@@ -230,7 +262,8 @@ public class WebController {
             @RequestParam String diagnostico,
             @RequestParam(required = false, defaultValue = "") String alergias,
             @RequestParam(required = false, defaultValue = "") String resultadosLaboratorio,
-            @RequestParam(required = false, defaultValue = "") String tratamiento) {
+            @RequestParam(required = false, defaultValue = "") String tratamiento,
+            RedirectAttributes redirectAttributes) {
 
         String redirect = requiereSesion(session);
         if (redirect != null) {
@@ -243,7 +276,25 @@ public class WebController {
                 pacienteId, citaIdLong, medicoTratante, diagnostico,
                 alergias, resultadosLaboratorio, tratamiento);
 
+        flashExito(redirectAttributes, "Historia clínica creada correctamente.");
         return "redirect:/dashboard/historial-clinico";
+    }
+
+    @PostMapping("/dashboard/historial-clinico/{id}/laboratorio")
+    public String agregarResultadosLaboratorio(
+            HttpSession session,
+            @PathVariable Long id,
+            @RequestParam String resultados,
+            RedirectAttributes redirectAttributes) {
+
+        String redirect = requiereSesion(session);
+        if (redirect != null) {
+            return redirect;
+        }
+
+        servicioAtencion.agregarResultadosLaboratorio(id, resultados);
+        flashExito(redirectAttributes, "Resultados de laboratorio guardados.");
+        return "redirect:/dashboard/historial-clinico/" + id;
     }
 
     // ── Facturación ─────────────────────────────────────────────────────────
@@ -268,7 +319,8 @@ public class WebController {
             HttpSession session,
             @RequestParam Long pacienteId,
             @RequestParam Long itemId,
-            @RequestParam String tipoCobertura) {
+            @RequestParam String tipoCobertura,
+            RedirectAttributes redirectAttributes) {
 
         String redirect = requiereSesion(session);
         if (redirect != null) {
@@ -277,6 +329,7 @@ public class WebController {
 
         servicioFacturacion.generarFactura(
                 pacienteId, itemId, TipoCobertura.valueOf(tipoCobertura.toUpperCase()));
+        flashExito(redirectAttributes, "Factura generada correctamente.");
         return "redirect:/dashboard/facturacion";
     }
 
@@ -284,7 +337,8 @@ public class WebController {
     public String crearServicio(
             HttpSession session,
             @RequestParam String nombre,
-            @RequestParam double precioBase) {
+            @RequestParam double precioBase,
+            RedirectAttributes redirectAttributes) {
 
         String redirect = requiereSesion(session);
         if (redirect != null) {
@@ -292,7 +346,18 @@ public class WebController {
         }
 
         servicioFacturacion.crearServicioSimple(nombre, precioBase);
+        flashExito(redirectAttributes, "Servicio \"" + nombre + "\" creado.");
         return "redirect:/dashboard/facturacion";
+    }
+
+    @GetMapping("/dashboard/perfil")
+    public String perfil(HttpSession session, Model model) {
+        String redirect = requiereSesion(session);
+        if (redirect != null) {
+            return redirect;
+        }
+        model.addAttribute("usuario", session.getAttribute(SESSION_USUARIO));
+        return "perfil";
     }
 
     @GetMapping("/dashboard/buscar-medicos")
@@ -369,6 +434,16 @@ public class WebController {
 
     private String requiereSesion(HttpSession session) {
         return session.getAttribute(SESSION_USUARIO) == null ? "redirect:/login" : null;
+    }
+
+    private void flashExito(RedirectAttributes redirectAttributes, String mensaje) {
+        redirectAttributes.addFlashAttribute("mensaje", mensaje);
+        redirectAttributes.addFlashAttribute("tipoMensaje", "success");
+    }
+
+    private void flashError(RedirectAttributes redirectAttributes, String mensaje) {
+        redirectAttributes.addFlashAttribute("mensaje", mensaje);
+        redirectAttributes.addFlashAttribute("tipoMensaje", "error");
     }
 
 }
