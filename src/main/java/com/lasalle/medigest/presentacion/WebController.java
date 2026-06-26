@@ -9,9 +9,11 @@ import com.lasalle.medigest.dominio.admision.TipoPaciente;
 import com.lasalle.medigest.dominio.atencion.HistoriaClinica;
 import com.lasalle.medigest.dominio.citas.Cita;
 import com.lasalle.medigest.dominio.citas.EstadoCita;
+import com.lasalle.medigest.dominio.excepcion.RecursoNoEncontradoException;
 import com.lasalle.medigest.dominio.facturacion.TipoCobertura;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,6 +24,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Controller
 @RequiredArgsConstructor
@@ -209,7 +212,7 @@ public class WebController {
         return "redirect:/dashboard/pacientes";
     }
 
-    // ── Pantallas pendientes ────────────────────────────────────────────────
+    // ── Historial clínico ───────────────────────────────────────────────────
 
     @GetMapping("/dashboard/historial-clinico")
     public String historialClinico(
@@ -222,15 +225,28 @@ public class WebController {
             return redirect;
         }
 
+        List<Paciente> pacientes = servicioAdmision.listarTodos();
         List<HistoriaClinica> historias = pacienteId != null
                 ? servicioAtencion.listarPorPaciente(pacienteId)
                 : servicioAtencion.listarTodas();
 
+        Set<Long> citasOcupadas = servicioAtencion.listarCitaIdsConHistoria();
+        List<Cita> citasDisponibles = servicioCitas.listarTodas().stream()
+                .filter(c -> !citasOcupadas.contains(c.getId()))
+                .toList();
+
         model.addAttribute("historias", historias);
         model.addAttribute("totalHistorias", historias.size());
-        model.addAttribute("listaPacientes", servicioAdmision.listarTodos());
-        model.addAttribute("listaCitas", servicioCitas.listarTodas());
+        model.addAttribute("listaPacientes", pacientes);
+        model.addAttribute("citasDisponibles", citasDisponibles);
         model.addAttribute("pacienteFiltro", pacienteId);
+        if (pacienteId != null) {
+            pacientes.stream()
+                    .filter(p -> p.getId().equals(pacienteId))
+                    .findFirst()
+                    .ifPresent(p -> model.addAttribute("pacienteFiltroNombre",
+                            p.getNombres() + " " + p.getApellidos()));
+        }
         return "historial";
     }
 
@@ -271,13 +287,23 @@ public class WebController {
         }
 
         Long citaIdLong = citaId.isBlank() ? null : Long.valueOf(citaId);
+        String redirectHistorial = "redirect:/dashboard/historial-clinico?pacienteId=" + pacienteId;
 
-        servicioAtencion.crearHistoriaClinica(
-                pacienteId, citaIdLong, medicoTratante, diagnostico,
-                alergias, resultadosLaboratorio, tratamiento);
-
-        flashExito(redirectAttributes, "Historia clínica creada correctamente.");
-        return "redirect:/dashboard/historial-clinico";
+        try {
+            servicioAtencion.crearHistoriaClinica(
+                    pacienteId, citaIdLong, medicoTratante, diagnostico,
+                    alergias, resultadosLaboratorio, tratamiento);
+            flashExito(redirectAttributes, "Historia clínica creada correctamente.");
+            return redirectHistorial;
+        } catch (IllegalStateException | IllegalArgumentException | RecursoNoEncontradoException e) {
+            flashError(redirectAttributes, e.getMessage());
+            return redirectHistorial;
+        } catch (DataIntegrityViolationException e) {
+            flashError(redirectAttributes,
+                    "No se pudo vincular la cita: ya existe una historia clínica asociada. "
+                            + "Elija otra cita o déjela sin vincular.");
+            return redirectHistorial;
+        }
     }
 
     @PostMapping("/dashboard/historial-clinico/{id}/laboratorio")

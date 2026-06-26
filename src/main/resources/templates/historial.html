@@ -53,6 +53,12 @@
                     <a th:href="@{/dashboard/historial-clinico}" class="btn-secondary btn-filter-link">Limpiar</a>
                 </form>
 
+                <p th:if="${pacienteFiltro != null}" class="page-hint filter-active-hint">
+                    <i class="fas fa-filter"></i>
+                    Mostrando historias de <strong th:text="${pacienteFiltroNombre}">Paciente</strong>.
+                    <a th:href="@{/dashboard/historial-clinico}">Ver todas las historias</a>
+                </p>
+
                 <div class="table-container">
                     <table class="pacientes-table">
                         <thead>
@@ -129,9 +135,10 @@
                     <div class="form-group">
                         <label for="histPacienteId">Paciente</label>
                         <select id="histPacienteId" name="pacienteId" required onchange="filtrarCitasPorPaciente()">
-                            <option value="" disabled selected>-- Seleccione paciente --</option>
+                            <option value="" disabled th:selected="${pacienteFiltro == null}">-- Seleccione paciente --</option>
                             <option th:each="p : ${listaPacientes}"
                                     th:value="${p.id}"
+                                    th:selected="${pacienteFiltro != null and pacienteFiltro == p.id}"
                                     th:text="${p.nombres + ' ' + p.apellidos + ' — DNI ' + p.dni}">
                             </option>
                         </select>
@@ -140,12 +147,16 @@
                         <label for="citaId">Cita vinculada (opcional)</label>
                         <select id="citaId" name="citaId">
                             <option value="">— Sin vincular cita —</option>
-                            <option th:each="c : ${listaCitas}"
+                            <option th:each="c : ${citasDisponibles}"
                                     th:value="${c.id}"
                                     th:attr="data-paciente-id=${c.paciente != null ? c.paciente.id : ''}"
-                                    th:text="${'Cita #' + c.id + ' — ' + (c.paciente != null ? c.paciente.nombres + ' ' + c.paciente.apellidos : 'Paciente') + ' · ' + c.especialidad}">
+                                    th:text="${'Cita #' + c.id + ' — ' + (c.paciente != null ? c.paciente.nombres + ' ' + c.paciente.apellidos : 'Paciente') + ' · ' + c.especialidad + ' (' + c.estado + ')'}">
                             </option>
                         </select>
+                        <p class="field-hint">Solo se listan citas sin historia clínica vinculada.</p>
+                        <p id="citasDisponiblesHint" class="field-hint text-warning hidden">
+                            Este paciente no tiene citas disponibles para vincular. Puede guardar la historia sin cita.
+                        </p>
                     </div>
                 </div>
 
@@ -225,13 +236,27 @@
         function filtrarCitasPorPaciente() {
             const pacienteId = document.getElementById('histPacienteId').value;
             const citaSelect = document.getElementById('citaId');
+            let visibles = 0;
             Array.from(citaSelect.options).forEach(function (opt, index) {
                 if (index === 0) return;
                 const optPaciente = opt.getAttribute('data-paciente-id');
-                opt.hidden = pacienteId && optPaciente !== pacienteId;
+                const mostrar = !pacienteId || optPaciente === pacienteId;
+                opt.hidden = !mostrar;
+                if (mostrar) visibles++;
             });
             citaSelect.value = '';
+            var hint = document.getElementById('citasDisponiblesHint');
+            if (hint) {
+                hint.classList.toggle('hidden', !pacienteId || visibles > 0);
+            }
         }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var pacienteSelect = document.getElementById('histPacienteId');
+            if (pacienteSelect && pacienteSelect.value) {
+                filtrarCitasPorPaciente();
+            }
+        });
     </script>
 </body>
 </html>

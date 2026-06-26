@@ -48,8 +48,11 @@ class ServicioAtencionTest {
     @Test
     void crearHistoriaClinica_construyeYGuardaConPacienteYCitaValidos() {
         Cita cita = mock(Cita.class);
+        when(paciente.getId()).thenReturn(1L);
+        when(cita.getPaciente()).thenReturn(paciente);
         when(pacienteRepository.findById(1L)).thenReturn(Optional.of(paciente));
         when(citaRepository.findById(10L)).thenReturn(Optional.of(cita));
+        when(historiaClinicaRepository.findByCitaId(10L)).thenReturn(Optional.empty());
         when(historiaClinicaRepository.save(any(HistoriaClinica.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
@@ -60,6 +63,41 @@ class ServicioAtencionTest {
         assertThat(resultado.getPaciente()).isEqualTo(paciente);
         assertThat(resultado.getCita()).isEqualTo(cita);
         verify(historiaClinicaRepository).save(any(HistoriaClinica.class));
+    }
+
+    @Test
+    void crearHistoriaClinica_rechazaCitaYaVinculada() {
+        Cita cita = mock(Cita.class);
+        when(paciente.getId()).thenReturn(1L);
+        when(cita.getPaciente()).thenReturn(paciente);
+        when(pacienteRepository.findById(1L)).thenReturn(Optional.of(paciente));
+        when(citaRepository.findById(10L)).thenReturn(Optional.of(cita));
+        when(historiaClinicaRepository.findByCitaId(10L))
+                .thenReturn(Optional.of(HistoriaClinica.builder().id(99L).build()));
+
+        assertThatThrownBy(() -> servicioAtencion.crearHistoriaClinica(
+                1L, 10L, "Dr. Ruiz", "Gripe", "", "", ""))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("ya tiene una historia");
+
+        verify(historiaClinicaRepository, never()).save(any());
+    }
+
+    @Test
+    void crearHistoriaClinica_rechazaCitaDeOtroPaciente() {
+        Paciente otroPaciente = mock(Paciente.class);
+        Cita cita = mock(Cita.class);
+        when(otroPaciente.getId()).thenReturn(2L);
+        when(cita.getPaciente()).thenReturn(otroPaciente);
+        when(pacienteRepository.findById(1L)).thenReturn(Optional.of(paciente));
+        when(citaRepository.findById(10L)).thenReturn(Optional.of(cita));
+
+        assertThatThrownBy(() -> servicioAtencion.crearHistoriaClinica(
+                1L, 10L, "Dr. Ruiz", "Gripe", "", "", ""))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("no pertenece");
+
+        verify(historiaClinicaRepository, never()).save(any());
     }
 
     @Test

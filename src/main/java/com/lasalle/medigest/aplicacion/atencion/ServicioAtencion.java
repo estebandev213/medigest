@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +28,20 @@ public class ServicioAtencion {
                                                  String resultados, String tratamiento) {
         Paciente paciente = pacienteRepository.findById(pacienteId)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Paciente no encontrado: " + pacienteId));
-        Cita cita = citaId != null ? citaRepository.findById(citaId).orElse(null) : null;
+
+        Cita cita = null;
+        if (citaId != null) {
+            cita = citaRepository.findById(citaId)
+                    .orElseThrow(() -> new RecursoNoEncontradoException("Cita no encontrada: " + citaId));
+            if (!cita.getPaciente().getId().equals(pacienteId)) {
+                throw new IllegalArgumentException(
+                        "La cita #" + citaId + " no pertenece al paciente seleccionado.");
+            }
+            if (historiaClinicaRepository.findByCitaId(citaId).isPresent()) {
+                throw new IllegalStateException(
+                        "La cita #" + citaId + " ya tiene una historia clínica. Elija otra cita o déjela sin vincular.");
+            }
+        }
 
         DirectorAtencion director = new DirectorAtencion(
                 new HistoriaClinicaBuilderImpl(paciente, cita, medicoTratante));
@@ -51,5 +66,12 @@ public class ServicioAtencion {
 
     public List<HistoriaClinica> listarTodas() {
         return historiaClinicaRepository.findAll();
+    }
+
+    public Set<Long> listarCitaIdsConHistoria() {
+        return historiaClinicaRepository.findAll().stream()
+                .filter(h -> h.getCita() != null)
+                .map(h -> h.getCita().getId())
+                .collect(Collectors.toSet());
     }
 }

@@ -797,6 +797,14 @@ body {
     color: var(--color-danger-text);
 }
 
+.field-hint.text-warning {
+    color: #b45309;
+}
+
+.filter-active-hint {
+    margin-bottom: 1rem;
+}
+
 .section-header {
     display: flex;
     justify-content: space-between;
