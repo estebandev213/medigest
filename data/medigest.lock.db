@@ -1,6 +1,0 @@
-#FileLock
-#Fri Jun 26 10:58:30 PET 2026
-hostName=genkoz-lnx
-id=19f04a770d6985866fdbc669dc8dd39f39bc58dd682
-method=file
-server=127.0.1.1\:40443
