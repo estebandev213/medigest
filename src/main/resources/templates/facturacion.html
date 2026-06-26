@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediGest - Facturación</title>
+    <link rel="stylesheet" th:href="@{/styles/global.css}">
+    <link rel="stylesheet" th:href="@{/styles/dashboard.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="dashboard-layout">
+
+        <div th:replace="~{fragments/dashboard-nav :: sidebar('facturacion')}"></div>
+
+        <div class="main-wrapper">
+
+            <div th:replace="~{fragments/dashboard-nav :: topbar('Módulo de Facturación', 'Nueva Factura', 'fas fa-file-invoice-dollar', 'modalFactura')}"></div>
+
+            <main class="main-content">
+
+                <div class="kpi-container">
+                    <div class="kpi-card text-primary">
+                        <h3>Facturas Emitidas</h3>
+                        <p class="kpi-value" th:text="${totalFacturas}">0</p>
+                        <span class="kpi-sub">Composite + Strategy activos</span>
+                    </div>
+                    <div class="kpi-card text-success">
+                        <h3>Servicios Disponibles</h3>
+                        <p class="kpi-value" th:text="${#lists.size(servicios)}">0</p>
+                        <span class="kpi-sub">Simples y paquetes</span>
+                    </div>
+                </div>
+
+                <div class="section-header">
+                    <h3><i class="fas fa-box"></i> Catálogo de Servicios</h3>
+                    <button type="button" class="btn-secondary btn-sm btn-open-modal" data-modal-target="modalServicio">
+                        <i class="fas fa-plus"></i> Nuevo Servicio
+                    </button>
+                </div>
+
+                <div class="table-container">
+                    <table class="pacientes-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Tipo</th>
+                                <th>Precio / Costo</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="item : ${servicios}">
+                                <td th:text="${item.id}">1</td>
+                                <td th:text="${item.nombre}">Consulta General</td>
+                                <td>
+                                    <span class="badge-tipo"
+                                          th:text="${item.class.simpleName == 'ServicioSimple' ? 'Servicio' : 'Paquete'}">Servicio</span>
+                                </td>
+                                <td th:text="${'S/ ' + #numbers.formatDecimal(item.calcularCosto(), 1, 2)}">S/ 50.00</td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(servicios)}">
+                                <td colspan="4" class="table-empty">
+                                    No hay servicios registrados. Cree uno con el botón «Nuevo Servicio».
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="section-header">
+                    <h3><i class="fas fa-file-invoice"></i> Facturas Generadas</h3>
+                </div>
+
+                <div class="table-container">
+                    <table class="pacientes-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Paciente</th>
+                                <th>Detalle</th>
+                                <th>Cobertura</th>
+                                <th>Total</th>
+                                <th>Cubierto</th>
+                                <th>A pagar</th>
+                                <th>Fecha</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="factura : ${facturas}">
+                                <td th:text="${factura.id}">1</td>
+                                <td th:text="${factura.paciente.nombres + ' ' + factura.paciente.apellidos}">Paciente</td>
+                                <td class="cell-truncate" th:text="${factura.detalle}">Consulta</td>
+                                <td>
+                                    <span class="badge-tipo" th:text="${factura.tipoCobertura}">SIS</span>
+                                </td>
+                                <td th:text="${'S/ ' + #numbers.formatDecimal(factura.costoTotal, 1, 2)}">S/ 100</td>
+                                <td th:text="${'S/ ' + #numbers.formatDecimal(factura.montoCubierto, 1, 2)}">S/ 80</td>
+                                <td th:text="${'S/ ' + #numbers.formatDecimal(factura.montoPaciente, 1, 2)}">S/ 20</td>
+                                <td th:text="${factura.fechaEmision != null ? #strings.replace(factura.fechaEmision, 'T', ' ') : '—'}">2026-06-26</td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(facturas)}">
+                                <td colspan="8" class="table-empty">
+                                    No hay facturas emitidas. Use «Nueva Factura» para generar una.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- Modal: Generar Factura -->
+    <div id="modalFactura" class="modal-overlay hidden">
+        <div class="modal-content-box">
+            <div class="modal-header">
+                <h3>Generar Factura (RF08)</h3>
+                <button type="button" class="close-btn" data-modal-close="modalFactura">&times;</button>
+            </div>
+
+            <form th:action="@{/dashboard/facturacion/generar}" method="post">
+                <input type="hidden" th:if="${_csrf}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+                <div class="form-group">
+                    <label for="factPacienteId">Paciente</label>
+                    <select id="factPacienteId" name="pacienteId" required>
+                        <option value="" disabled selected>-- Seleccione paciente --</option>
+                        <option th:each="p : ${listaPacientes}"
+                                th:value="${p.id}"
+                                th:text="${p.nombres + ' ' + p.apellidos + ' — ' + p.tipo}">
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="itemId">Servicio o Paquete</label>
+                    <select id="itemId" name="itemId" required>
+                        <option value="" disabled selected>-- Seleccione ítem --</option>
+                        <option th:each="item : ${servicios}"
+                                th:value="${item.id}"
+                                th:text="${item.nombre + ' — S/ ' + #numbers.formatDecimal(item.calcularCosto(), 1, 2)}">
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="tipoCobertura">Tipo de Cobertura (Strategy)</label>
+                    <select id="tipoCobertura" name="tipoCobertura" required>
+                        <option value="PARTICULAR">Particular (100% paciente)</option>
+                        <option value="SIS">SIS (80% cubierto)</option>
+                        <option value="SEGURO_PRIVADO">Seguro Privado (70% cubierto)</option>
+                    </select>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" data-modal-close="modalFactura">Cancelar</button>
+                    <button type="submit" class="btn-submit">Generar Factura</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Crear Servicio -->
+    <div id="modalServicio" class="modal-overlay hidden">
+        <div class="modal-content-box">
+            <div class="modal-header">
+                <h3>Crear Servicio Simple (RF10)</h3>
+                <button type="button" class="close-btn" data-modal-close="modalServicio">&times;</button>
+            </div>
+
+            <form th:action="@{/dashboard/facturacion/servicios}" method="post">
+                <input type="hidden" th:if="${_csrf}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+                <div class="form-group">
+                    <label for="nombre">Nombre del Servicio</label>
+                    <input type="text" id="nombre" name="nombre" placeholder="Ej. Consulta General" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="precioBase">Precio Base (S/)</label>
+                    <input type="number" id="precioBase" name="precioBase" step="0.01" min="0" placeholder="50.00" required>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" data-modal-close="modalServicio">Cancelar</button>
+                    <button type="submit" class="btn-submit">Crear Servicio</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script th:src="@{/scripts/dashboard.js}"></script>
+</body>
+</html>

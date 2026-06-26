@@ -3,15 +3,19 @@ package com.lasalle.medigest.presentacion;
 import com.lasalle.medigest.aplicacion.admision.ServicioAdmision;
 import com.lasalle.medigest.aplicacion.atencion.ServicioAtencion;
 import com.lasalle.medigest.aplicacion.citas.ServicioCitas;
+import com.lasalle.medigest.aplicacion.facturacion.ServicioFacturacion;
 import com.lasalle.medigest.dominio.admision.Paciente;
 import com.lasalle.medigest.dominio.admision.TipoPaciente;
 import com.lasalle.medigest.dominio.atencion.HistoriaClinica;
 import com.lasalle.medigest.dominio.citas.Cita;
+import com.lasalle.medigest.dominio.citas.EstadoCita;
+import com.lasalle.medigest.dominio.facturacion.TipoCobertura;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -27,6 +31,7 @@ public class WebController {
     private final ServicioCitas servicioCitas;
     private final ServicioAdmision servicioAdmision;
     private final ServicioAtencion servicioAtencion;
+    private final ServicioFacturacion servicioFacturacion;
 
     // ── Público ─────────────────────────────────────────────────────────────
 
@@ -74,6 +79,7 @@ public class WebController {
         List<Cita> citas = servicioCitas.listarTodas();
         model.addAttribute("misCitas", citas);
         model.addAttribute("totalCitas", citas.size());
+        model.addAttribute("listaPacientes", servicioAdmision.listarTodos());
         return "dashboard";
     }
 
@@ -106,18 +112,56 @@ public class WebController {
         return "redirect:/dashboard";
     }
 
+    @PostMapping("/dashboard/citas/{id}/confirmar")
+    public String confirmarCita(HttpSession session, @PathVariable Long id) {
+        String redirect = requiereSesion(session);
+        if (redirect != null) {
+            return redirect;
+        }
+        servicioCitas.confirmarCita(id);
+        return "redirect:/dashboard";
+    }
+
+    @PostMapping("/dashboard/citas/{id}/cancelar")
+    public String cancelarCita(HttpSession session, @PathVariable Long id) {
+        String redirect = requiereSesion(session);
+        if (redirect != null) {
+            return redirect;
+        }
+        servicioCitas.cancelarCita(id);
+        return "redirect:/dashboard";
+    }
+
+    @PostMapping("/dashboard/citas/{id}/atender")
+    public String marcarAtendida(HttpSession session, @PathVariable Long id) {
+        String redirect = requiereSesion(session);
+        if (redirect != null) {
+            return redirect;
+        }
+        servicioCitas.cambiarEstadoGenerico(id, EstadoCita.ATENDIDA);
+        return "redirect:/dashboard";
+    }
+
     // ── Pacientes ───────────────────────────────────────────────────────────
 
     @GetMapping("/dashboard/pacientes")
-    public String listarPacientes(HttpSession session, Model model) {
+    public String listarPacientes(
+            HttpSession session,
+            Model model,
+            @RequestParam(required = false) String dni) {
+
         String redirect = requiereSesion(session);
         if (redirect != null) {
             return redirect;
         }
 
-        List<Paciente> pacientes = servicioAdmision.listarTodos();
+        List<Paciente> pacientes = (dni != null && !dni.isBlank())
+                ? servicioAdmision.buscarPorDni(dni.trim()).map(List::of).orElse(List.of())
+                : servicioAdmision.listarTodos();
+
         model.addAttribute("listaPacientes", pacientes);
         model.addAttribute("totalPacientes", pacientes.size());
+        model.addAttribute("dniFiltro", dni);
         return "pacientes";
     }
 
@@ -200,6 +244,55 @@ public class WebController {
                 alergias, resultadosLaboratorio, tratamiento);
 
         return "redirect:/dashboard/historial-clinico";
+    }
+
+    // ── Facturación ─────────────────────────────────────────────────────────
+
+    @GetMapping("/dashboard/facturacion")
+    public String facturacion(HttpSession session, Model model) {
+        String redirect = requiereSesion(session);
+        if (redirect != null) {
+            return redirect;
+        }
+
+        var facturas = servicioFacturacion.listarFacturas();
+        model.addAttribute("facturas", facturas);
+        model.addAttribute("totalFacturas", facturas.size());
+        model.addAttribute("servicios", servicioFacturacion.listarServicios());
+        model.addAttribute("listaPacientes", servicioAdmision.listarTodos());
+        return "facturacion";
+    }
+
+    @PostMapping("/dashboard/facturacion/generar")
+    public String generarFactura(
+            HttpSession session,
+            @RequestParam Long pacienteId,
+            @RequestParam Long itemId,
+            @RequestParam String tipoCobertura) {
+
+        String redirect = requiereSesion(session);
+        if (redirect != null) {
+            return redirect;
+        }
+
+        servicioFacturacion.generarFactura(
+                pacienteId, itemId, TipoCobertura.valueOf(tipoCobertura.toUpperCase()));
+        return "redirect:/dashboard/facturacion";
+    }
+
+    @PostMapping("/dashboard/facturacion/servicios")
+    public String crearServicio(
+            HttpSession session,
+            @RequestParam String nombre,
+            @RequestParam double precioBase) {
+
+        String redirect = requiereSesion(session);
+        if (redirect != null) {
+            return redirect;
+        }
+
+        servicioFacturacion.crearServicioSimple(nombre, precioBase);
+        return "redirect:/dashboard/facturacion";
     }
 
     @GetMapping("/dashboard/buscar-medicos")

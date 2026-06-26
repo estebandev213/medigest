@@ -13,7 +13,7 @@ function cerrarModal(id) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-    document.querySelectorAll('.btn-open-modal').forEach(function (btn) {
+    document.querySelectorAll('.btn-open-modal, [data-modal-target]').forEach(function (btn) {
         btn.addEventListener('click', function () {
             abrirModal(btn.getAttribute('data-modal-target'));
         });

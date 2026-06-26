@@ -710,3 +710,110 @@ body {
     color: var(--color-primary);
     font-weight: 600;
 }
+
+/* Acciones en tarjetas de citas */
+.card-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--color-border);
+    flex-wrap: wrap;
+}
+
+.card-actions form {
+    margin: 0;
+}
+
+.btn-card-action {
+    border: none;
+    padding: 8px 14px;
+    border-radius: var(--border-radius);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: var(--transition-fast);
+}
+
+.btn-card-action.btn-success {
+    background-color: var(--color-success-bg);
+    color: var(--color-success-text);
+}
+
+.btn-card-action.btn-success:hover {
+    background-color: var(--color-success);
+    color: var(--color-surface);
+}
+
+.btn-card-action.btn-danger {
+    background-color: var(--color-danger-bg);
+    color: var(--color-danger-text);
+}
+
+.btn-card-action.btn-danger:hover {
+    background-color: var(--color-danger);
+    color: var(--color-surface);
+}
+
+.btn-card-action.btn-primary-sm {
+    background-color: var(--color-primary-light);
+    color: var(--color-primary-dark);
+}
+
+.btn-card-action.btn-primary-sm:hover {
+    background-color: var(--color-primary);
+    color: var(--color-surface);
+}
+
+/* DNI validation & form helpers */
+.input-with-action {
+    display: flex;
+    gap: 8px;
+}
+
+.input-with-action input {
+    flex: 1;
+}
+
+.btn-inline {
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.field-hint {
+    font-size: 12px;
+    margin-top: 6px;
+    color: var(--color-text-secondary);
+}
+
+.field-hint.text-success {
+    color: var(--color-success-text);
+}
+
+.field-hint.text-danger {
+    color: var(--color-danger-text);
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 24px 0 12px;
+}
+
+.section-header h3 {
+    margin: 0;
+    font-size: 16px;
+    color: var(--color-text-primary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-sm {
+    padding: 8px 14px;
+    font-size: 13px;
+}

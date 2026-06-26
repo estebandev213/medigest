@@ -20,6 +20,9 @@
             <a th:href="@{/dashboard/historial-clinico}" class="menu-item" th:classappend="${seccionActiva == 'historial'} ? 'active' : ''">
                 <i class="fas fa-file-medical"></i> Historial Clínico
             </a>
+            <a th:href="@{/dashboard/facturacion}" class="menu-item" th:classappend="${seccionActiva == 'facturacion'} ? 'active' : ''">
+                <i class="fas fa-file-invoice-dollar"></i> Facturación
+            </a>
             <a href="#" class="menu-item" th:classappend="${seccionActiva == 'perfil'} ? 'active' : ''">
                 <i class="fas fa-user"></i> Mi Perfil
             </a>

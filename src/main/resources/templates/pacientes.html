@@ -20,6 +20,19 @@
 
             <main class="main-content">
 
+                <form class="filter-bar" th:action="@{/dashboard/pacientes}" method="get">
+                    <div class="form-group filter-group">
+                        <label for="dni">Buscar por DNI (UC03)</label>
+                        <input type="text" id="dni" name="dni" placeholder="8 dígitos" maxlength="8"
+                               th:value="${dniFiltro}"
+                               oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                    </div>
+                    <button type="submit" class="btn-primary btn-filter">
+                        <i class="fas fa-search"></i> Buscar
+                    </button>
+                    <a th:href="@{/dashboard/pacientes}" class="btn-secondary btn-filter-link">Limpiar</a>
+                </form>
+
                 <div class="kpi-container">
                     <div class="kpi-card text-success">
                         <h3>Pacientes Totales</h3>
@@ -64,9 +77,10 @@
                                     <span class="badge-tipo" th:text="${paciente.tipo}">SIS</span>
                                 </td>
                                 <td>
-                                    <button type="button" class="btn-action" title="Ver Historial">
+                                    <a th:href="@{/dashboard/historial-clinico(pacienteId=${paciente.id})}"
+                                       class="btn-action" title="Ver Historial">
                                         <i class="fas fa-eye"></i>
-                                    </button>
+                                    </a>
                                 </td>
                             </tr>
                             <tr th:if="${#lists.isEmpty(listaPacientes)}">
@@ -94,8 +108,14 @@
 
                 <div class="form-group">
                     <label for="dni">Documento Nacional de Identidad (DNI)</label>
-                    <input type="text" id="dni" name="dni" placeholder="8 dígitos" maxlength="8"
-                           oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
+                    <div class="input-with-action">
+                        <input type="text" id="dni" name="dni" placeholder="8 dígitos" maxlength="8"
+                               oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
+                        <button type="button" id="btnValidarDni" class="btn-primary btn-inline" title="Consultar RENIEC">
+                            <i class="fas fa-id-card"></i> Validar DNI
+                        </button>
+                    </div>
+                    <p id="dniValidacionMsg" class="field-hint hidden"></p>
                 </div>
 
                 <div class="form-row">
@@ -149,5 +169,36 @@
     </div>
 
     <script th:src="@{/scripts/dashboard.js}"></script>
+    <script>
+        document.getElementById('btnValidarDni')?.addEventListener('click', async function () {
+            const dni = document.getElementById('dni').value.trim();
+            const msg = document.getElementById('dniValidacionMsg');
+            if (dni.length !== 8) {
+                msg.textContent = 'Ingrese un DNI válido de 8 dígitos.';
+                msg.className = 'field-hint text-danger';
+                return;
+            }
+            msg.textContent = 'Consultando RENIEC...';
+            msg.className = 'field-hint';
+            try {
+                const res = await fetch('/api/admision/pacientes/' + dni + '/validar');
+                if (!res.ok) throw new Error('No se pudo validar el DNI');
+                const data = await res.json();
+                document.getElementById('nombres').value = data.nombres || '';
+                document.getElementById('apellidos').value = data.apellidos || '';
+                if (data.fechaNacimiento) {
+                    document.getElementById('fechaNacimiento').value = data.fechaNacimiento;
+                }
+                if (data.direccion) {
+                    document.getElementById('direccion').value = data.direccion;
+                }
+                msg.textContent = 'Datos obtenidos de RENIEC correctamente.';
+                msg.className = 'field-hint text-success';
+            } catch (e) {
+                msg.textContent = 'Error al consultar RENIEC. Verifique el DNI o el token APIPERU_TOKEN.';
+                msg.className = 'field-hint text-danger';
+            }
+        });
+    </script>
 </body>
 </html>

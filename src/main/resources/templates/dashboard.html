@@ -80,6 +80,29 @@
                                     <p th:text="${cita.motivo}">Control rutinario</p>
                                 </div>
                             </div>
+
+                            <div class="card-actions" th:if="${cita.estado.name() != 'CANCELADA' and cita.estado.name() != 'ATENDIDA'}">
+                                <form th:if="${cita.estado.name() == 'PENDIENTE'}"
+                                      th:action="@{/dashboard/citas/{id}/confirmar(id=${cita.id})}" method="post">
+                                    <input type="hidden" th:if="${_csrf}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                                    <button type="submit" class="btn-card-action btn-success">
+                                        <i class="fas fa-check"></i> Confirmar
+                                    </button>
+                                </form>
+                                <form th:if="${cita.estado.name() == 'CONFIRMADA'}"
+                                      th:action="@{/dashboard/citas/{id}/atender(id=${cita.id})}" method="post">
+                                    <input type="hidden" th:if="${_csrf}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                                    <button type="submit" class="btn-card-action btn-primary-sm">
+                                        <i class="fas fa-stethoscope"></i> Marcar Atendida
+                                    </button>
+                                </form>
+                                <form th:action="@{/dashboard/citas/{id}/cancelar(id=${cita.id})}" method="post">
+                                    <input type="hidden" th:if="${_csrf}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                                    <button type="submit" class="btn-card-action btn-danger">
+                                        <i class="fas fa-times"></i> Cancelar
+                                    </button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -99,9 +122,14 @@
                 <input type="hidden" th:if="${_csrf}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
 
                 <div class="form-group">
-                    <label for="pacienteId">Código del Paciente (ID)</label>
-                    <input type="text" id="pacienteId" name="pacienteId" placeholder="Ej. 1"
-                           oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
+                    <label for="pacienteId">Paciente</label>
+                    <select id="pacienteId" name="pacienteId" required>
+                        <option value="" disabled selected>-- Seleccione paciente --</option>
+                        <option th:each="p : ${listaPacientes}"
+                                th:value="${p.id}"
+                                th:text="${p.nombres + ' ' + p.apellidos + ' — DNI ' + p.dni + ' (ID ' + p.id + ')'}">
+                        </option>
+                    </select>
                 </div>
 
                 <div class="form-group">
