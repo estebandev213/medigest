@@ -47,4 +47,8 @@ public class ServicioAtencion {
     public List<HistoriaClinica> listarPorPaciente(Long pacienteId) {
         return historiaClinicaRepository.findByPacienteId(pacienteId);
     }
+
+    public List<HistoriaClinica> listarTodas() {
+        return historiaClinicaRepository.findAll();
+    }
 }

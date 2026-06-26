@@ -1,21 +1,35 @@
 :root {
-    /* Brand Colors */
+    /* Brand */
     --color-primary: #1A6FAF;
     --color-primary-dark: #0F4C81;
     --color-primary-light: #E8F2FA;
     --color-primary-hover: #155D96;
 
-    /* Status Colors */
+    /* Status */
     --color-success: #22C55E;
-    --color-warning: #F59E0B;
-    --color-danger: #EF4444;
+    --color-success-bg: #DCFCE7;
+    --color-success-text: #15803D;
 
-    /* Neutral Colors */
+    --color-warning: #F59E0B;
+    --color-warning-bg: #FEF9C3;
+    --color-warning-text: #A16207;
+
+    --color-danger: #EF4444;
+    --color-danger-bg: #FEE2E2;
+    --color-danger-text: #991B1B;
+
+    --color-info-bg: #E0F2FE;
+    --color-info-text: #0369A1;
+
+    /* Neutral */
     --color-background: #F4F7FB;
     --color-surface: #FFFFFF;
     --color-border: #DDE3EC;
+    --color-muted: #F8FAFC;
+    --color-secondary: #E2E8F0;
+    --color-secondary-text: #334155;
 
-    /* Text Colors */
+    /* Text */
     --color-text-primary: #1A2340;
     --color-text-secondary: #6B7A99;
 
@@ -25,7 +39,11 @@
 
     /* UI */
     --border-radius: 10px;
+    --border-radius-pill: 12px;
     --shadow-sm: 0 2px 12px rgba(26, 111, 175, 0.10);
+    --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+    --shadow-lg: 0 20px 40px rgba(26, 35, 64, 0.12);
+    --overlay: rgba(0, 0, 0, 0.5);
     --transition-fast: 0.18s ease;
 }
 
@@ -33,4 +51,16 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.form-error {
+    color: var(--color-danger);
+    margin-top: 15px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 14px;
 }

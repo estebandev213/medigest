@@ -5,7 +5,7 @@
 
     <aside th:fragment="sidebar(seccionActiva)" class="sidebar">
         <div class="sidebar-brand">
-            <a href="#" class="logo">Medi<span>Gest</span></a>
+            <a th:href="@{/dashboard}" class="logo">Medi<span>Gest</span></a>
         </div>
         <nav class="sidebar-menu">
             <a th:href="@{/dashboard}" class="menu-item" th:classappend="${seccionActiva == 'citas'} ? 'active' : ''">
@@ -31,13 +31,17 @@
         </div>
     </aside>
 
-    <header th:fragment="topbar(tituloPantalla)" class="topbar">
+    <header th:fragment="topbar(titulo, accionTexto, accionIcono, modalId)" class="topbar">
         <div class="topbar-left">
-            <h2 th:text="${tituloPantalla}">Título</h2>
+            <h2 th:text="${titulo}">Título</h2>
         </div>
-        
-        <div th:replace="${botonesPantalla} ?: ~{}"></div>
-        
+        <button th:if="${!#strings.isEmpty(accionTexto)}"
+                type="button"
+                class="btn-primary btn-open-modal"
+                th:attr="data-modal-target=${modalId}">
+            <i th:class="${accionIcono}"></i>
+            <span th:text="${accionTexto}">Acción</span>
+        </button>
         <div class="topbar-right">
             <div class="user-info">
                 <span class="user-name">Admin MediGest</span>

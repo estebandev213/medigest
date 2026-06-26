@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediGest - Historial Clínico</title>
+    <link rel="stylesheet" th:href="@{/styles/global.css}">
+    <link rel="stylesheet" th:href="@{/styles/dashboard.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="dashboard-layout">
+
+        <div th:replace="~{fragments/dashboard-nav :: sidebar('historial')}"></div>
+
+        <div class="main-wrapper">
+
+            <div th:replace="~{fragments/dashboard-nav :: topbar('Historial Clínico', 'Nueva Historia', 'fas fa-file-medical', 'modalHistoria')}"></div>
+
+            <main class="main-content">
+
+                <div class="kpi-container">
+                    <div class="kpi-card text-primary">
+                        <h3>Historias Registradas</h3>
+                        <p class="kpi-value" th:text="${totalHistorias}">0</p>
+                        <span class="kpi-sub">Atenciones documentadas</span>
+                    </div>
+                    <div class="kpi-card text-success">
+                        <h3>Módulo</h3>
+                        <p class="kpi-value">Atención</p>
+                        <span class="kpi-sub">Patrón Builder activo</span>
+                    </div>
+                </div>
+
+                <form class="filter-bar" th:action="@{/dashboard/historial-clinico}" method="get">
+                    <div class="form-group filter-group">
+                        <label for="pacienteId">Filtrar por paciente</label>
+                        <select id="pacienteId" name="pacienteId">
+                            <option value="">— Todos los pacientes —</option>
+                            <option th:each="p : ${listaPacientes}"
+                                    th:value="${p.id}"
+                                    th:text="${p.nombres + ' ' + p.apellidos + ' (ID ' + p.id + ')'}"
+                                    th:selected="${pacienteFiltro != null and pacienteFiltro == p.id}">
+                            </option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn-primary btn-filter">
+                        <i class="fas fa-search"></i> Buscar
+                    </button>
+                    <a th:href="@{/dashboard/historial-clinico}" class="btn-secondary btn-filter-link">Limpiar</a>
+                </form>
+
+                <div class="table-container">
+                    <table class="pacientes-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Paciente</th>
+                                <th>Médico Tratante</th>
+                                <th>Fecha</th>
+                                <th>Diagnóstico</th>
+                                <th>Tratamiento</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="historia : ${historias}">
+                                <td th:text="${historia.id}">1</td>
+                                <td>
+                                    <div class="patient-name-cell">
+                                        <div class="avatar-circle avatar-sm">
+                                            <i class="fas fa-user"></i>
+                                        </div>
+                                        <span th:text="${historia.paciente.nombres + ' ' + historia.paciente.apellidos}">Paciente</span>
+                                    </div>
+                                </td>
+                                <td th:text="${historia.medicoTratante}">Dr. López</td>
+                                <td th:text="${historia.fechaAtencion != null ? historia.fechaAtencion : '—'}">2026-06-26</td>
+                                <td class="cell-truncate" th:text="${historia.diagnostico}">Diagnóstico</td>
+                                <td class="cell-truncate" th:text="${historia.tratamiento != null and !#strings.isEmpty(historia.tratamiento) ? historia.tratamiento : '—'}">Tratamiento</td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(historias)}">
+                                <td colspan="6" class="table-empty">
+                                    No hay historias clínicas registradas<span th:if="${pacienteFiltro != null}"> para este paciente</span>.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <div id="modalHistoria" class="modal-overlay hidden">
+        <div class="modal-content-box modal-wide">
+            <div class="modal-header">
+                <h3>Crear Historia Clínica</h3>
+                <button type="button" class="close-btn" data-modal-close="modalHistoria">&times;</button>
+            </div>
+
+            <form th:action="@{/dashboard/historial-clinico/crear}" method="post">
+                <input type="hidden" th:if="${_csrf}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="histPacienteId">Paciente</label>
+                        <select id="histPacienteId" name="pacienteId" required>
+                            <option value="" disabled selected>-- Seleccione paciente --</option>
+                            <option th:each="p : ${listaPacientes}"
+                                    th:value="${p.id}"
+                                    th:text="${p.nombres + ' ' + p.apellidos + ' — DNI ' + p.dni}">
+                            </option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="citaId">ID Cita (opcional)</label>
+                        <input type="text" id="citaId" name="citaId" placeholder="Ej. 1"
+                               oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="medicoTratante">Médico Tratante</label>
+                    <input type="text" id="medicoTratante" name="medicoTratante"
+                           placeholder="Ej. Dr. Jeanfranco Lazarinos" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="diagnostico">Diagnóstico</label>
+                    <textarea id="diagnostico" name="diagnostico" rows="3"
+                              placeholder="Diagnóstico principal..." required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="alergias">Alergias</label>
+                    <input type="text" id="alergias" name="alergias" placeholder="Ej. Penicilina, polen...">
+                </div>
+
+                <div class="form-group">
+                    <label for="resultadosLaboratorio">Resultados de Laboratorio</label>
+                    <textarea id="resultadosLaboratorio" name="resultadosLaboratorio" rows="2"
+                              placeholder="Resultados relevantes..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="tratamiento">Tratamiento</label>
+                    <textarea id="tratamiento" name="tratamiento" rows="2"
+                              placeholder="Medicación, indicaciones..."></textarea>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" data-modal-close="modalHistoria">Cancelar</button>
+                    <button type="submit" class="btn-submit">Guardar Historia</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script th:src="@{/scripts/dashboard.js}"></script>
+</body>
+</html>

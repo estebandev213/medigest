@@ -1,6 +1,0 @@
-#FileLock
-#Thu Jun 25 15:00:26 PET 2026
-hostName=192.168.1.9
-id=19f005e954a512d5d5913bb9ea08330a4d693d10cd9
-method=file
-server=192.168.1.9\:54050

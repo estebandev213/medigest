@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediGest - Directorio de Médicos</title>
+    <link rel="stylesheet" th:href="@{/styles/global.css}">
+    <link rel="stylesheet" th:href="@{/styles/dashboard.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="dashboard-layout">
+
+        <div th:replace="~{fragments/dashboard-nav :: sidebar('medicos')}"></div>
+
+        <div class="main-wrapper">
+
+            <div th:replace="~{fragments/dashboard-nav :: topbar('Directorio de Médicos', '', '', '')}"></div>
+
+            <main class="main-content">
+
+                <div class="kpi-container">
+                    <div class="kpi-card text-primary">
+                        <h3>Especialistas</h3>
+                        <p class="kpi-value" th:text="${totalEspecialistas}">0</p>
+                        <span class="kpi-sub">Registrados en MediGest</span>
+                    </div>
+                    <div class="kpi-card text-success">
+                        <h3>Agendar</h3>
+                        <p class="kpi-value">Desde Citas</p>
+                        <span class="kpi-sub">Use el módulo Mis Citas para programar</span>
+                    </div>
+                </div>
+
+                <div class="cards-grid">
+                    
+                    <div class="appointment-card doctor-directory-card" th:each="medico : ${listaMedicos}">
+                        
+                        <div class="card-header">
+                            <span class="insurance-badge" th:text="${medico.especialidad}">Especialidad</span>
+                        </div>
+                        
+                        <div class="card-body">
+                            <div class="patient-info">
+                                
+                                <div class="doctor-avatar-box">
+                                    <img th:src="@{'/images/medicos/' + ${medico.foto != null && !medico.foto.isEmpty() ? medico.foto : 'DefaultMed.png'}}" 
+                                         onerror="this.onerror=null; this.src='/images/medicos/DefaultMed.png';" 
+                                         alt="Foto del Médico">
+                                </div>
+                                
+                                <div>
+                                    <h4 th:text="${medico.nombre}">Nombre del Médico</h4>
+                                    <p class="dni-text" th:text="${medico.especialidad} + ' · Personal Activo'"></p>
+                                </div>
+                            </div>
+                            
+                            <p class="doctor-bio" th:text="${medico.bio}">Biografía y descripción profesional del médico de la red.</p>
+                        </div>
+                        
+                    </div>
+
+                </div>
+
+                <p class="page-hint">
+                    <i class="fas fa-info-circle"></i>
+                    Para agendar una consulta con alguno de estos profesionales, regrese a
+                    <a th:href="@{/dashboard}">Mis Citas</a>, abra el formulario y selecciónelo por su especialidad.
+                </p>
+
+            </main>
+        </div>
+    </div>
+
+    <script th:src="@{/scripts/dashboard.js}"></script>
+</body>
+</html>

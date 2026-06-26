@@ -1,0 +1,238 @@
+.
+├── data
+│   ├── medigest.lock.db
+│   └── medigest.mv.db
+├── mvnw
+├── mvnw.cmd
+├── pom.xml
+├── README.md
+├── src
+│   ├── main
+│   │   ├── java
+│   │   │   └── com
+│   │   │       └── lasalle
+│   │   │           └── medigest
+│   │   │               ├── aplicacion
+│   │   │               │   ├── admision
+│   │   │               │   │   ├── ReniecAdapter.java
+│   │   │               │   │   ├── ReniecAdapterStub.java
+│   │   │               │   │   └── ServicioAdmision.java
+│   │   │               │   ├── atencion
+│   │   │               │   │   ├── DirectorAtencion.java
+│   │   │               │   │   ├── HistoriaClinicaBuilderImpl.java
+│   │   │               │   │   └── ServicioAtencion.java
+│   │   │               │   ├── citas
+│   │   │               │   │   ├── NotificadorMedico.java
+│   │   │               │   │   ├── RegistroAuditoria.java
+│   │   │               │   │   └── ServicioCitas.java
+│   │   │               │   └── facturacion
+│   │   │               │       ├── CalculadorFactura.java
+│   │   │               │       ├── PagoParticular.java
+│   │   │               │       ├── PagoSeguroPrivado.java
+│   │   │               │       ├── PagoSIS.java
+│   │   │               │       └── ServicioFacturacion.java
+│   │   │               ├── dominio
+│   │   │               │   ├── admision
+│   │   │               │   │   ├── DatosPaciente.java
+│   │   │               │   │   ├── Paciente.java
+│   │   │               │   │   ├── TipoPaciente.java
+│   │   │               │   │   └── ValidadorIdentidad.java
+│   │   │               │   ├── atencion
+│   │   │               │   │   ├── HistoriaClinicaBuilder.java
+│   │   │               │   │   └── HistoriaClinica.java
+│   │   │               │   ├── citas
+│   │   │               │   │   ├── Cita.java
+│   │   │               │   │   ├── EstadoCita.java
+│   │   │               │   │   └── Observer.java
+│   │   │               │   └── facturacion
+│   │   │               │       ├── EstrategiaPago.java
+│   │   │               │       ├── Factura.java
+│   │   │               │       ├── ItemFacturable.java
+│   │   │               │       ├── PaqueteServicios.java
+│   │   │               │       ├── ServicioFacturable.java
+│   │   │               │       ├── ServicioSimple.java
+│   │   │               │       └── TipoCobertura.java
+│   │   │               ├── infraestructura
+│   │   │               │   ├── apiperu
+│   │   │               │   │   ├── ApiPeruClient.java
+│   │   │               │   │   ├── ApiPeruDniResponse.java
+│   │   │               │   │   └── ApiPeruException.java
+│   │   │               │   └── config
+│   │   │               │       └── ApiPeruConfig.java
+│   │   │               ├── MedigestApplication.java
+│   │   │               ├── persistencia
+│   │   │               │   ├── admision
+│   │   │               │   │   └── PacienteRepository.java
+│   │   │               │   ├── atencion
+│   │   │               │   │   └── HistoriaClinicaRepository.java
+│   │   │               │   ├── citas
+│   │   │               │   │   └── CitaRepository.java
+│   │   │               │   └── facturacion
+│   │   │               │       ├── FacturaRepository.java
+│   │   │               │       ├── ItemFacturableRepository.java
+│   │   │               │       ├── PaqueteServiciosRepository.java
+│   │   │               │       └── ServicioSimpleRepository.java
+│   │   │               └── presentacion
+│   │   │                   ├── admision
+│   │   │                   │   └── AdmisionController.java
+│   │   │                   ├── atencion
+│   │   │                   │   └── AtencionController.java
+│   │   │                   ├── citas
+│   │   │                   │   └── CitasController.java
+│   │   │                   ├── facturacion
+│   │   │                   │   └── FacturacionController.java
+│   │   │                   └── MainUiController.java
+│   │   └── resources
+│   │       ├── application.properties
+│   │       ├── static
+│   │       │   ├── images
+│   │       │   │   ├── medico01.png
+│   │       │   │   ├── medico02.png
+│   │       │   │   ├── medico03.png
+│   │       │   │   ├── medigestLeder.png
+│   │       │   │   └── portadamedigest.png
+│   │       │   ├── scripts
+│   │       │   │   └── landing.js
+│   │       │   └── styles
+│   │       │       ├── dashboard.css
+│   │       │       ├── global.css
+│   │       │       ├── landing.css
+│   │       │       └── login.css
+│   │       └── templates
+│   │           ├── dashboard.html
+│   │           ├── fragments
+│   │           │   └── dashboard-nav.html
+│   │           ├── index.html
+│   │           ├── login.html
+│   │           └── pacientes.html
+│   └── test
+│       └── java
+│           └── com
+│               └── lasalle
+│                   └── medigest
+│                       └── MedigestApplicationTests.java
+├── struct2.txt
+└── target
+    ├── classes
+    │   ├── application.properties
+    │   ├── com
+    │   │   └── lasalle
+    │   │       └── medigest
+    │   │           ├── aplicacion
+    │   │           │   ├── admision
+    │   │           │   │   ├── ReniecAdapter.class
+    │   │           │   │   ├── ReniecAdapterStub.class
+    │   │           │   │   └── ServicioAdmision.class
+    │   │           │   ├── atencion
+    │   │           │   │   ├── DirectorAtencion.class
+    │   │           │   │   ├── HistoriaClinicaBuilderImpl.class
+    │   │           │   │   └── ServicioAtencion.class
+    │   │           │   ├── citas
+    │   │           │   │   ├── NotificadorMedico.class
+    │   │           │   │   ├── RegistroAuditoria.class
+    │   │           │   │   └── ServicioCitas.class
+    │   │           │   └── facturacion
+    │   │           │       ├── CalculadorFactura$ResultadoFactura.class
+    │   │           │       ├── CalculadorFactura.class
+    │   │           │       ├── PagoParticular.class
+    │   │           │       ├── PagoSeguroPrivado.class
+    │   │           │       ├── PagoSIS.class
+    │   │           │       └── ServicioFacturacion.class
+    │   │           ├── dominio
+    │   │           │   ├── admision
+    │   │           │   │   ├── DatosPaciente.class
+    │   │           │   │   ├── Paciente$PacienteBuilder.class
+    │   │           │   │   ├── Paciente.class
+    │   │           │   │   ├── TipoPaciente.class
+    │   │           │   │   └── ValidadorIdentidad.class
+    │   │           │   ├── atencion
+    │   │           │   │   ├── HistoriaClinica$HistoriaClinicaBuilder.class
+    │   │           │   │   ├── HistoriaClinicaBuilder.class
+    │   │           │   │   └── HistoriaClinica.class
+    │   │           │   ├── citas
+    │   │           │   │   ├── Cita$CitaBuilder.class
+    │   │           │   │   ├── Cita.class
+    │   │           │   │   ├── EstadoCita.class
+    │   │           │   │   └── Observer.class
+    │   │           │   └── facturacion
+    │   │           │       ├── EstrategiaPago.class
+    │   │           │       ├── Factura$FacturaBuilder.class
+    │   │           │       ├── Factura.class
+    │   │           │       ├── ItemFacturable.class
+    │   │           │       ├── PaqueteServicios.class
+    │   │           │       ├── ServicioFacturable.class
+    │   │           │       ├── ServicioSimple.class
+    │   │           │       └── TipoCobertura.class
+    │   │           ├── infraestructura
+    │   │           │   ├── apiperu
+    │   │           │   │   ├── ApiPeruClient.class
+    │   │           │   │   ├── ApiPeruDniResponse$DniData.class
+    │   │           │   │   ├── ApiPeruDniResponse.class
+    │   │           │   │   └── ApiPeruException.class
+    │   │           │   └── config
+    │   │           │       └── ApiPeruConfig.class
+    │   │           ├── MedigestApplication.class
+    │   │           ├── persistencia
+    │   │           │   ├── admision
+    │   │           │   │   └── PacienteRepository.class
+    │   │           │   ├── atencion
+    │   │           │   │   └── HistoriaClinicaRepository.class
+    │   │           │   ├── citas
+    │   │           │   │   └── CitaRepository.class
+    │   │           │   └── facturacion
+    │   │           │       ├── FacturaRepository.class
+    │   │           │       ├── ItemFacturableRepository.class
+    │   │           │       ├── PaqueteServiciosRepository.class
+    │   │           │       └── ServicioSimpleRepository.class
+    │   │           └── presentacion
+    │   │               ├── admision
+    │   │               │   └── AdmisionController.class
+    │   │               ├── atencion
+    │   │               │   └── AtencionController.class
+    │   │               ├── citas
+    │   │               │   └── CitasController.class
+    │   │               ├── facturacion
+    │   │               │   └── FacturacionController.class
+    │   │               └── MainUiController.class
+    │   ├── static
+    │   │   ├── images
+    │   │   │   ├── medico01.png
+    │   │   │   ├── medico02.png
+    │   │   │   ├── medico03.png
+    │   │   │   ├── medigestLeder.png
+    │   │   │   └── portadamedigest.png
+    │   │   ├── scripts
+    │   │   │   └── landing.js
+    │   │   └── styles
+    │   │       ├── dashboard.css
+    │   │       ├── global.css
+    │   │       ├── landing.css
+    │   │       └── login.css
+    │   └── templates
+    │       ├── dashboard.html
+    │       ├── fragments
+    │       │   └── dashboard-nav.html
+    │       ├── index.html
+    │       ├── login.html
+    │       └── pacientes.html
+    ├── generated-sources
+    │   └── annotations
+    ├── generated-test-sources
+    │   └── test-annotations
+    ├── maven-status
+    │   └── maven-compiler-plugin
+    │       ├── compile
+    │       │   └── default-compile
+    │       │       ├── createdFiles.lst
+    │       │       └── inputFiles.lst
+    │       └── testCompile
+    │           └── default-testCompile
+    │               ├── createdFiles.lst
+    │               └── inputFiles.lst
+    └── test-classes
+        └── com
+            └── lasalle
+                └── medigest
+                    └── MedigestApplicationTests.class
+
+91 directories, 145 files
