@@ -8,8 +8,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Map;
-
 /**
  * Cliente HTTP que encapsula las llamadas a la API de apiperu.dev.
  * Maneja autenticación (Bearer token), serialización y errores de red.
@@ -33,15 +31,14 @@ public class ApiPeruClient {
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(apiPeruConfig.getToken());
 
-        Map<String, String> body = Map.of("dni", dni);
-        HttpEntity<Map<String, String>> request = new HttpEntity<>(body, headers);
+        HttpEntity<Void> request = new HttpEntity<>(headers);
 
         try {
             log.info("Consultando DNI {} en apiperu.dev", dni);
 
             ResponseEntity<ApiPeruDniResponse> response = apiPeruRestTemplate.exchange(
-                    "/dni",
-                    HttpMethod.POST,
+                    "/dni/" + dni,
+                    HttpMethod.GET,
                     request,
                     ApiPeruDniResponse.class
             );
